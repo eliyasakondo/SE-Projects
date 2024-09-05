@@ -55,7 +55,7 @@ body{
 .btn:hover .hover-green{
   color:rgb(70,180,70,1);
 }
-
+/*
 .admin-panel{
     width: 20%;
     background: #0004;
@@ -64,4 +64,19 @@ body{
     margin:0px;
     padding: 0px;  
     
+}
+    */
+
+
+footer {
+    background-color: #264653; /* Dark Blue-Green */
+    color: #FFFFFF; /* White */
+    text-align: center;
+    padding: 20px 0;
+    font-family: 'Poppins', Arial, sans-serif;
+}
+
+footer p {
+    margin: 0;
+    font-size: 14px;
 }

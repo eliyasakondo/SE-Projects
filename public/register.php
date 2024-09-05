@@ -31,54 +31,11 @@ include_once '../includes/footer.php';
 */
 ?>
 <?php
+$pageTitle = 'Tutor Registration';
+$tutor_register = '../assets/css/tutor_register.css';
 include_once '../includes/header.php';
 include_once '../includes/functions.php';
-body {
-    font-family: 'Roboto', Arial, sans-serif;
-    color: #000000;
-    background-color: #FFFFFF;
-}
-
-h2, h3 {
-    font-family: 'Poppins', Arial, sans-serif;
-    color: #264653;
-}
-
-label {
-    font-family: 'Poppins', Arial, sans-serif;
-    color: #264653;
-}
-
-input, select, textarea {
-    font-family: 'Roboto', Arial, sans-serif;
-    border: 1px solid #2a9d8f;
-    padding: 8px;
-    margin-bottom: 10px;
-    width: 100%;
-}
-
-button {
-    font-family: 'Poppins', Arial, sans-serif;
-    background-color: #2a9d8f;
-    color: #FFFFFF;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #f4a261;
-}
-
-main {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fefae0;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-include_once '../includes/db.php';
+//include_once '../includes/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];

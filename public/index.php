@@ -1,4 +1,5 @@
 <?php
+ $pageTitle = 'Home'; 
 include_once '../includes/header.php';
 ?>
 <main>

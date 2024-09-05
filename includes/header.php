@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tutor Registration System</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
+    <title> <?php echo $pageTitle; ?></title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <?php if(isset($tutor_register)): ?>
+    <link rel="stylesheet" href="<?php echo $tutor_register; ?>">
+    <?php endif; ?>
     <script src="../assets/js/script.js" defer></script>
 </head>
 <body>
