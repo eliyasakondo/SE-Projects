@@ -67,6 +67,30 @@ body{
 }
     */
 
+/* Header Styles */
+header {
+    background: linear-gradient(to right, #264653, #2a9d8f);
+    color: #FFFFFF;
+    padding: 20px;
+    text-align: center;
+}
+
+header h1 {
+    font-family: 'Poppins', Arial, sans-serif;
+    margin: 0;
+}
+
+nav a {
+    color: #FFFFFF;
+    margin: 0 15px;
+    text-decoration: none;
+    font-family: 'Poppins', Arial, sans-serif;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
 
 footer {
     background-color: #264653; /* Dark Blue-Green */
