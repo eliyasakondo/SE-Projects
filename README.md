@@ -32,6 +32,129 @@ Notification:
 Step 8: The selected tutor receives a notification of their acceptance via email or another preferred method.
 
 Step 9: If rejected, the applicant receives feedback and possible next steps.
+Online Recruitment System for Tutors: Step-by-Step Approval Process
+
+Roles and Responsibilities:
+
+Tutor:
+
+Initial application submission.
+
+Providing necessary documents and information.
+
+Coordinator:
+
+Reviewing the application for completeness and initial eligibility.
+
+Forwarding the application to the Dean.
+
+Dean:
+
+Assessing the application based on academic criteria and department needs.
+
+Approving or rejecting the application.
+
+Forwarding approved applications to the SSS.
+
+SSS (Student Services Section):
+
+Conducting further administrative review.
+
+Ensuring compliance with university policies.
+
+Forwarding the application to the Dean of SST/Pro VC.
+
+Dean SST/Pro VC:
+
+Final review and decision-making authority.
+
+Approving the application and ensuring all criteria are met.
+
+Returning the application to SSS for final processing.
+
+SSS:
+
+Finalizing the administrative process.
+
+Ensuring all necessary documentation is complete.
+
+Forwarding the application back to the Dean.
+
+Dean:
+
+Confirming the final approval.
+
+Returning the application to the Coordinator.
+
+Coordinator:
+
+Informing the Tutor of the decision.
+
+Coordinating any further steps required for onboarding.
+
+Tutor:
+
+Completing any additional steps required for registration.
+
+Starting the tutoring engagement.
+
+Project Workflow
+
+Tutor Application Submission:
+
+Tutors submit their applications online through a dedicated portal.
+
+Required documents include CV, academic certificates, and a statement of purpose.
+
+Initial Review by Coordinator:
+
+Coordinator checks the application for completeness.
+
+If complete, the application is forwarded to the Dean.
+
+Dean's Assessment:
+
+Dean reviews the academic credentials and fit for the department.
+
+Approved applications are sent to SSS for further review.
+
+Administrative Review by SSS:
+
+SSS ensures the application adheres to university policies.
+
+After review, the application is forwarded to the Dean of SST/Pro VC.
+
+Final Decision by Dean SST/Pro VC:
+
+Dean SST/Pro VC conducts a final review.
+
+Approved applications are sent back to SSS for processing.
+
+SSS Final Processing:
+
+SSS completes any remaining administrative tasks.
+
+The application is returned to the Dean.
+
+Dean's Confirmation:
+
+Dean confirms the final approval.
+
+Application is sent to the Coordinator.
+
+Coordinator Notification:
+
+Coordinator informs the Tutor of the decision.
+
+Provides instructions for the next steps.
+
+Tutor Onboarding:
+
+Tutor completes onboarding steps.
+
+Begins tutoring sessions.
+
+
 
 ## 2. Late Registration System
 
