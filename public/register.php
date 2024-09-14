@@ -96,9 +96,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         <label for="dob">Date of Birth:</label>
         <input type="date" id="dob" name="dob" required>
-        
+
         <h3>Educational Qualification</h3>
-        
+
         <div id="education-section">
             <div class="education-entry">
                 <label for="degree">Degree:</label>
@@ -122,7 +122,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <option value="4.00">4.00</option>
                     <option value="3.00">3.00</option>
                 </select>
-                <button type="button" class="remove-education">Remove</button>
             </div>
         </div>
         <button type="button" id="add-education">Add More Education</button>
@@ -145,10 +144,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 
                 <label for="till_today">Till Today:</label>
                 <input type="checkbox" id="till_today" name="till_today[]" onchange="toggleEndDate(this)">
-                <button type="button" class="remove-experience">Remove</button>
+                
+                
             </div>
         </div>
         <button type="button" id="add-experience">Add More Experience</button>
+        
+
         
         <h3>File Uploads</h3>
         <p>Photo (JPEG/PNG, max 300 KB), Signature (JPEG/PNG, max 100 KB), CV (PDF, max 1 MB, optional)</p>
@@ -159,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <label for="signature">Signature:</label>
         <input type="file" id="signature" name="signature" required>
         
-        <label for="cv">CV:</label>
+        <label for="cv">Attachment (CV):</label>
         <input type="file" id="cv" name="cv">
         
         <button type="submit">Register</button>
@@ -222,8 +224,7 @@ document.getElementById('add-experience').addEventListener('click', function() {
         <label for="till_today">Till Today:</label>
         <input type="checkbox" id="till_today" name="till_today[]" onchange="toggleEndDate(this)">
         
-        <label for="attachment">Attachment (CV):</label>
-        <input type="file" id="attachment" name="attachment[]" required>
+       
         <button type="button" class="remove-experience">Remove</button>
     `;
     experienceSection.appendChild(newEntry);
@@ -265,4 +266,5 @@ function removeExperienceEntry(event) {
 
 // Initialize remove button listeners for any existing entries
 addRemoveButtonListener();
+
 </script>
