@@ -1,41 +1,10 @@
-<?php
-/*
-include_once '../includes/header.php';
-include_once '../includes/functions.php';
-include_once '../includes/db.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
-    $password = hash_password($_POST['password']);
-    
-    $sql = "INSERT INTO tutors (email, password) VALUES (?, ?)";
-    query($sql, [$email, $password]);
-    
-    echo "Registration successful!";
-}
-?>
-<main>
-    <h2>Register</h2>
-    <form method="POST" action="">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-        
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        
-        <button type="submit">Register</button>
-    </form>
-</main>
-<?php
-include_once '../includes/footer.php';
-*/
-?>
 <?php
 $pageTitle = 'Tutor Registration';
 $tutor_register = '../assets/css/tutor_register.css';
 include_once '../includes/header.php';
 include_once '../includes/functions.php';
-//include_once '../includes/db.php';
+include_once '../includes/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
@@ -62,6 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     // Get the last inserted tutor ID
     $tutor_id = get_last_insert_id();
+    
+    // Debugging: Check the value of tutor_id
+    if (!$tutor_id) {
+        die('Error: Unable to retrieve last insert ID.');
+    }
     
     // Insert into applications table
     $sql = "INSERT INTO applications (tutor_id, name, father_name, mother_name, nid, passport, dob, degree, university, major, degree_duration, cgpa, cgpa_out_of, organization, job_responsibilities, service_duration) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -137,5 +111,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </main>
 <?php
 include_once '../includes/footer.php';
-
 ?>
