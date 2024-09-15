@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         <div id="education-section">
             <div class="education-entry show">
-            <h4>Add Education Info</h4>
+                <h4>Add Education Info</h4>
                 <label for="degree_type">Degree Type:<span>*</span></label>
                 <select id="degree_type" name="degree_type[]" required>
                     <option value="">--Select--</option>
@@ -195,59 +195,240 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         <h3>Experiences</h3>
 
-<div id="experience-section">
-    <div class="experience-entry show">
-        <label for="organization_type">Organization Type:<span>*</span></label>
-        <select id="organization_type" name="organization_type[]" required>
-            <option value="">--Select--</option>
-            <option value="University">University</option>
-            <option value="Research organization">Research organization</option>
-            <option value="Govt. job">Govt. job</option>
-            <option value="Private job">Private job</option>
-            <option value="Autonomous">Autonomous</option>
-            <option value="Others">Others</option>
-        </select>
-
-        <label for="organization_name">Organization Name:<span>*</span></label>
-        <input type="text" id="organization_name" name="organization_name[]" required>
-
-        <label for="experience_type">Experience Type:<span>*</span></label>
-        <select id="experience_type" name="experience_type[]" required>
-            <option value="">--Select--</option>
-            <option value="Teaching">Teaching</option>
-            <option value="Research">Research</option>
-            <option value="Others">Others</option>
-        </select>
-
-        <label for="designation">Designation:<span>*</span></label>
-        <input type="text" id="designation" name="designation[]" required>
-
-        <label for="start_date">Start Date:<span>*</span></label>
-        <input type="date" id="start_date" name="start_date[]" required>
-
-        <label for="end_date">End Date:</label>
-        <input type="date" id="end_date" name="end_date[]">
-
-        <label for="basic_salary">Basic Salary:<span>*</span></label>
-        <input type="number" id="basic_salary" name="basic_salary[]" required>
-
-        <label for="pay_scale">Pay Scale:</label>
-        <input type="text" id="pay_scale" name="pay_scale[]">
-
-        <label for="details">Details:<span>*</span></label>
-        <textarea id="details" name="details[]" rows="3" required></textarea>
-
-        <label for="attachment">Attachment (Experience Certificate in pdf):<span>*</span></label>
-        <input type="file" id="attachment" name="attachment[]" accept="application/pdf" required>
-    </div>
-</div>
-
-            <button type="button" id="add-experience" class="btn btn-add-experience">Add More Experience</button>
+        <div id="experience-section">
+            <div class="experience-entry show">
+                <label for="organization_type">Organization Type:<span>*</span></label>
+                <select id="organization_type" name="organization_type[]" required>
+                    <option value="">--Select--</option>
+                    <option value="University">University</option>
+                    <option value="Research organization">Research organization</option>
+                    <option value="Govt. job">Govt. job</option>
+                    <option value="Private job">Private job</option>
+                    <option value="Autonomous">Autonomous</option>
+                    <option value="Others">Others</option>
+                </select>
         
-       
-       
+                <label for="organization_name">Organization Name:<span>*</span></label>
+                <input type="text" id="organization_name" name="organization_name[]" required>
+        
+                <label for="experience_type">Experience Type:<span>*</span></label>
+                <select id="experience_type" name="experience_type[]" required>
+                    <option value="">--Select--</option>
+                    <option value="Teaching">Teaching</option>
+                    <option value="Research">Research</option>
+                    <option value="Others">Others</option>
+                </select>
+        
+                <label for="designation">Designation:<span>*</span></label>
+                <input type="text" id="designation" name="designation[]" required>
+        
+                <label for="start_date">Start Date:<span>*</span></label>
+                <input type="date" id="start_date" name="start_date[]" required>
+        
+                <label for="end_date">End Date:</label>
+                <input type="date" id="end_date" name="end_date[]">
+        
+                <label for="basic_salary">Basic Salary:<span>*</span></label>
+                <input type="number" id="basic_salary" name="basic_salary[]" required>
+        
+                <label for="pay_scale">Pay Scale:</label>
+                <input type="text" id="pay_scale" name="pay_scale[]">
+        
+                <label for="details">Details:<span>*</span></label>
+                <textarea id="details" name="details[]" rows="3" required></textarea>
+        
+                <label for="attachment">Attachment (Experience Certificate in pdf):<span>*</span></label>
+                <input type="file" id="attachment" name="attachment[]" accept="application/pdf" required>
+            </div>
+        </div>
 
-            <button type="submit" class="btn">Register</button>
+
+        <button type="button" id="add-experience" class="btn btn-add-experience">Add More Experience</button>
+        
+        <h3>Language Proficiency</h3>
+
+        <div id="language-section">
+            <div class="language-entry show">
+                <label for="language">Language:<span>*</span></label>
+                <input type="text" id="language" name="language[]" required>
+        
+                <label for="proficiency_level">Proficiency Level:<span>*</span></label>
+                <select id="proficiency_level" name="proficiency_level[]" required>
+                    <option value="">--Select--</option>
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Professional">Professional</option>
+                    <option value="Fluent">Fluent</option>
+                    <option value="Native/Bi-lingual">Native/Bi-lingual</option>
+                </select>
+            </div>
+        </div>
+        <button type="button" id="add-language" class="btn btn-add-language">Add Language Proficiency</button>
+
+        <h3>Research Project Info</h3>
+        
+        <div id="research-project-section">
+            <div class="research-project-entry show">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title[]">
+        
+                <label for="funding_agency">Awarding/Funding Agency:</label>
+                <input type="text" id="funding_agency" name="funding_agency[]">
+        
+                <label for="period">Period:</label>
+                <input type="text" id="period" name="period[]">
+        
+                <label for="grant">Grant (in Lakh BDT):</label>
+                <input type="number" id="grant" name="grant[]">
+        
+                <label for="status">Status:</label>
+                <select id="status" name="status[]">
+                    <option value="">--Select--</option>
+                    <option value="Ongoing">Ongoing</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
+        </div>
+        <button type="button" id="add-research-project" class="btn btn-add-research-project">Add More Research Project</button>
+
+        <h3>Publications</h3>
+
+        <div id="publication-section">
+            <div class="publication-entry show">
+                <label for="publication_source">Publication Source:</label>
+                <select id="publication_source" name="publication_source[]" required onchange="togglePublicationFields(this)">
+                    <option value="">--Select--</option>
+                    <option value="Journal">Journal</option>
+                    <option value="Book">Book</option>
+                </select>
+        
+                <div class="journal-fields" style="display: none;">
+                    <label for="title">Title:<span>*</span></label>
+                    <input type="text" id="title" name="title[]" required>
+        
+                    <label for="authors">Author(s):</label>
+                    <input type="text" id="authors" name="authors[]">
+                    <small>Use comma(,) to separate multiple authors(s)</small>
+        
+                    <label for="journal_name">Journal Name:</label>
+                    <input type="text" id="journal_name" name="journal_name[]">
+        
+                    <label for="year">Year:<span>*</span></label>
+                    <select id="year" name="year[]" required>
+                        <option value="">--Select Year--</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                    </select>
+        
+                    <label for="month">Month:<span>*</span></label>
+                    <select id="month" name="month[]" required>
+                        <option value="">--Select--</option>
+                        <option value="January">January</option>
+                        <option value="February">February</option>
+                        <option value="March">March</option>
+                        <!-- Add other months as needed -->
+                    </select>
+        
+                    <label for="pages">Pages:</label>
+                    <input type="text" id="pages" name="pages[]">
+        
+                    <label for="publisher">Publisher:</label>
+                    <input type="text" id="publisher" name="publisher[]">
+        
+                    <label for="volume">Volume:</label>
+                    <input type="text" id="volume" name="volume[]">
+        
+                    <label for="author_type">Type of Author:</label>
+                    <select id="author_type" name="author_type[]">
+                        <option value="">--Select--</option>
+                        <option value="Principle">Principle</option>
+                        <option value="Corresponding">Corresponding</option>
+                    </select>
+        
+                    <label for="issue">Issue:</label>
+                    <input type="text" id="issue" name="issue[]">
+        
+                    <label for="keywords">Keyword(s):</label>
+                    <input type="text" id="keywords" name="keywords[]">
+                    <small>Use comma(,) to separate multiple keyword(s)</small>
+        
+                    <label for="impact_factor">Impact Factor/Cite Score (If any):</label>
+                    <input type="text" id="impact_factor" name="impact_factor[]">
+        
+                    <label for="issn">ISSN:</label>
+                    <input type="text" id="issn" name="issn[]">
+        
+                    <label for="doi">DOI:</label>
+                    <input type="text" id="doi" name="doi[]">
+        
+                    <label for="indexed_by">Indexed By(s):</label>
+                    <input type="text" id="indexed_by" name="indexed_by[]">
+                    <small>Use comma(,) to Indexed multiple separate By(s)</small>
+        
+                    <label for="web_url">Web Url:</label>
+                    <input type="url" id="web_url" name="web_url[]">
+                </div>
+        
+                <div class="book-fields" style="display: none;">
+                    <label for="book_title">Book Title:<span>*</span></label>
+                    <input type="text" id="book_title" name="book_title[]" required>
+        
+                    <label for="book_authors">Author(s):</label>
+                    <input type="text" id="book_authors" name="book_authors[]">
+                    <small>Use comma(,) to separate multiple authors(s)</small>
+        
+                    <label for="book_year">Year:<span>*</span></label>
+                    <select id="book_year" name="book_year[]" required>
+                        <option value="">--Select Year--</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                    </select>
+        
+                    <label for="book_month">Month:<span>*</span></label>
+                    <select id="book_month" name="book_month[]" required>
+                        <option value="">--Select--</option>
+                        <option value="January">January</option>
+                        <option value="February">February</option>
+                        <option value="March">March</option>
+                        <!-- Add other months as needed -->
+                    </select>
+        
+                    <label for="city">City:</label>
+                    <input type="text" id="city" name="city[]">
+        
+                    <label for="book_publisher">Book Publisher:</label>
+                    <input type="text" id="book_publisher" name="book_publisher[]">
+        
+                    <label for="book_keywords">Keyword(s):</label>
+                    <input type="text" id="book_keywords" name="book_keywords[]">
+                    <small>Use comma(,) to separate multiple keyword(s)</small>
+        
+                    <label for="book_impact_factor">Impact Factor/Cite Score (If any):</label>
+                    <input type="text" id="book_impact_factor" name="book_impact_factor[]">
+        
+                    <label for="indexed_by">Indexed By(s):</label>
+                    <input type="text" id="indexed_by" name="indexed_by[]">
+                    <small>Use comma(,) to Indexed multiple separate By(s)</small>
+        
+                    <label for="isbn">ISBN No:</label>
+                    <input type="text" id="isbn" name="isbn[]">
+        
+                    <label for="book_web_url">Web Url:</label>
+                    <input type="url" id="book_web_url" name="book_web_url[]">
+                </div>
+            </div>
+        </div>
+        <button type="button" id="add-publication" class="btn btn-add-publication">Add More Publication</button>
+        <div>
+        <label for="terms_conditions">
+            <input type="checkbox" id="terms_conditions" name="terms_conditions" required>
+            I agree to the <a href="#">terms and conditions</a>.
+</div>
+        <button type="submit" class="btn">Register</button>
       
     </form>
 </main>
@@ -396,6 +577,310 @@ document.getElementById('add-experience').addEventListener('click', function() {
     addRemoveButtonListener();
 });
 
+document.getElementById('add-language').addEventListener('click', function() {
+    var languageSection = document.getElementById('language-section');
+    var newEntry = document.createElement('div');
+    newEntry.classList.add('language-entry');
+    newEntry.innerHTML = `
+        <div>
+            <h4>Add Language Proficiency</h4>
+            <label for="language">Language:<span>*</span></label>
+            <input type="text" id="language" name="language[]" required>
+
+            <label for="proficiency_level">Proficiency Level:<span>*</span></label>
+            <select id="proficiency_level" name="proficiency_level[]" required>
+                <option value="">--Select--</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Professional">Professional</option>
+                <option value="Fluent">Fluent</option>
+                <option value="Native/Bi-lingual">Native/Bi-lingual</option>
+            </select>
+
+            <button type="button" class="remove-language">
+                <i class="fas fa-trash-alt"></i> Remove
+            </button>
+        </div>
+    `;
+    languageSection.appendChild(newEntry);
+    setTimeout(() => newEntry.classList.add('show'), 10); // Add show class with a slight delay
+    addRemoveButtonListener();
+});
+document.getElementById('add-research-project').addEventListener('click', function() {
+    var researchProjectSection = document.getElementById('research-project-section');
+    var newEntry = document.createElement('div');
+    newEntry.classList.add('research-project-entry');
+    newEntry.innerHTML = `
+        <div>
+            <h4>Add Research Project Info</h4>
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title[]">
+
+            <label for="funding_agency">Awarding/Funding Agency:</label>
+            <input type="text" id="funding_agency" name="funding_agency[]">
+
+            <label for="period">Period:</label>
+            <input type="text" id="period" name="period[]">
+
+            <label for="grant">Grant (in Lakh BDT):</label>
+            <input type="number" id="grant" name="grant[]">
+
+            <label for="status">Status:</label>
+            <select id="status" name="status[]">
+                <option value="">--Select--</option>
+                <option value="Ongoing">Ongoing</option>
+                <option value="Completed">Completed</option>
+            </select>
+
+            <button type="button" class="remove-research-project">
+                <i class="fas fa-trash-alt"></i> Remove
+            </button>
+        </div>
+    `;
+    researchProjectSection.appendChild(newEntry);
+    setTimeout(() => newEntry.classList.add('show'), 10); // Add show class with a slight delay
+    addRemoveButtonListener();
+});
+
+document.getElementById('add-publication').addEventListener('click', function() {
+    var publicationSection = document.getElementById('publication-section');
+    var newEntry = document.createElement('div');
+    newEntry.classList.add('publication-entry');
+    newEntry.innerHTML = `
+        <div>
+            <h4>Add Publication Info</h4>
+            <label for="publication_source">Publication Source:<span>*</span></label>
+            <select id="publication_source" name="publication_source[]" required onchange="togglePublicationFields(this)">
+                <option value="">--Select--</option>
+                <option value="Journal">Journal</option>
+                <option value="Book">Book</option>
+            </select>
+
+            <div class="journal-fields" style="display: none;">
+                <label for="title">Title:<span>*</span></label>
+                <input type="text" id="title" name="title[]" required>
+
+                <label for="authors">Author(s): 
+                    <small>Use comma(,) to separate multiple authors(s)</small>
+                </label>
+                <input type="text" id="authors" name="authors[]">
+                
+
+                <label for="journal_name">Journal Name:</label>
+                <input type="text" id="journal_name" name="journal_name[]">
+
+                <label for="year">Year:<span>*</span></label>
+                <select id="year" name="year[]" required>
+                    <option value="">--Select Year--</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                    <option value="2019">2019</option>
+                    <option value="2018">2018</option>
+                    <option value="2017">2017</option>
+                    <option value="2016">2016</option>
+                    <option value="2015">2015</option>
+                    <option value="2014">2014</option>
+                    <option value="2013">2013</option>
+                    <option value="2012">2012</option>
+                    <option value="2011">2011</option>
+                    <option value="2010">2010</option>
+                    <option value="2009">2009</option>
+                    <option value="2008">2008</option>
+                    <option value="2007">2007</option>
+                    <option value="2006">2006</option>
+                    <option value="2005">2005</option>
+                    <option value="2004">2004</option>
+                    <option value="2003">2003</option>
+                    <option value="2002">2002</option>
+                    <option value="2001">2001</option>
+                    <option value="2000">2000</option>
+                    <option value="1999">1999</option>
+                    <option value="1998">1998</option>
+                    <option value="1997">1997</option>
+                    <option value="1996">1996</option>
+                    <option value="1995">1995</option>
+                    <option value="1994">1994</option>
+                    <option value="1993">1993</option>
+                </select>
+
+                <label for="month">Month:<span>*</span></label>
+                <select id="month" name="month[]" required>
+                    <option value="">--Select--</option>
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                    <!-- Add other months as needed -->
+                </select>
+
+                <label for="pages">Pages:</label>
+                <input type="text" id="pages" name="pages[]">
+
+                <label for="publisher">Publisher:</label>
+                <input type="text" id="publisher" name="publisher[]">
+
+                <label for="volume">Volume:</label>
+                <input type="text" id="volume" name="volume[]">
+
+                <label for="author_type">Type of Author:</label>
+                <select id="author_type" name="author_type[]">
+                    <option value="">--Select--</option>
+                    <option value="Principle">Principle</option>
+                    <option value="Corresponding">Corresponding</option>
+                </select>
+
+                <label for="issue">Issue:</label>
+                <input type="text" id="issue" name="issue[]">
+
+                <label for="keywords">Keyword(s):<small>Use comma(,) to separate multiple keyword(s)</small></label>
+                <input type="text" id="keywords" name="keywords[]">
+                
+
+                <label for="impact_factor">Impact Factor/Cite Score (If any):</label>
+                <input type="text" id="impact_factor" name="impact_factor[]">
+
+                <label for="issn">ISSN:</label>
+                <input type="text" id="issn" name="issn[]">
+
+                <label for="doi">DOI:</label>
+                <input type="text" id="doi" name="doi[]">
+
+                <label for="indexed_by">Indexed By(s):<small>Use comma(,) to Indexed multiple separate By(s)</small></label>
+                <input type="text" id="indexed_by" name="indexed_by[]">
+                
+
+                <label for="web_url">Web Url:</label>
+                <input type="url" id="web_url" name="web_url[]">
+            </div>
+
+            <div class="book-fields" style="display: none;">
+                <label for="book_title">Book Title:<span>*</span></label>
+                <input type="text" id="book_title" name="book_title[]" required>
+
+                <label for="book_authors">Author(s):<small>Use comma(,) to separate multiple authors(s)</small></label>
+                <input type="text" id="book_authors" name="book_authors[]">
+                
+
+                <label for="book_year">Year:<span>*</span></label>
+                <select id="book_year" name="book_year[]" required>
+                    <option value="">--Select Year--</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                    <option value="2019">2019</option>
+                    <option value="2018">2018</option>
+                    <option value="2017">2017</option>
+                    <option value="2016">2016</option>
+                    <option value="2015">2015</option>
+                    <option value="2014">2014</option>
+                    <option value="2013">2013</option>
+                    <option value="2012">2012</option>
+                    <option value="2011">2011</option>
+                    <option value="2010">2010</option>
+                    <option value="2009">2009</option>
+                    <option value="2008">2008</option>
+                    <option value="2007">2007</option>
+                    <option value="2006">2006</option>
+                    <option value="2005">2005</option>
+                    <option value="2004">2004</option>
+                    <option value="2003">2003</option>
+                    <option value="2002">2002</option>
+                    <option value="2001">2001</option>
+                    <option value="2000">2000</option>
+                    <option value="1999">1999</option>
+                    <option value="1998">1998</option>
+                    <option value="1997">1997</option>
+                    <option value="1996">1996</option>
+                    <option value="1995">1995</option>
+                    <option value="1994">1994</option>
+                    <option value="1993">1993</option>
+                    <option value="1992">1992</option>
+                    <option value="1991">1991</option>
+                    <option value="1990">1990</option>
+                </select>
+
+                <label for="book_month">Month:<span>*</span></label>
+                <select id="book_month" name="book_month[]" required>
+                    <option value="">--Select--</option>
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                    <!-- Add other months as needed -->
+                </select>
+
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city[]">
+
+                <label for="book_publisher">Book Publisher:</label>
+                <input type="text" id="book_publisher" name="book_publisher[]">
+
+                <label for="book_keywords">Keyword(s): <small>Use comma(,) to separate multiple keyword(s)</small></label>
+                <input type="text" id="book_keywords" name="book_keywords[]">
+               
+
+                <label for="book_impact_factor">Impact Factor/Cite Score (If any):</label>
+                <input type="text" id="book_impact_factor" name="book_impact_factor[]">
+
+                <label for="indexed_by">Indexed By(s): <small>Use comma(,) to Indexed multiple separate By(s)</small></label>
+                <input type="text" id="indexed_by" name="indexed_by[]">
+               
+
+                <label for="isbn">ISBN No:</label>
+                <input type="text" id="isbn" name="isbn[]">
+
+                <label for="book_web_url">Web Url:</label>
+                <input type="url" id="book_web_url" name="book_web_url[]">
+            </div>
+
+            <button type="button" class="remove-publication">
+                <i class="fas fa-trash-alt"></i> Remove
+            </button>
+        </div>
+    `;
+    publicationSection.appendChild(newEntry);
+    setTimeout(() => newEntry.classList.add('show'), 10); // Add show class with a slight delay
+    addRemoveButtonListener();
+});
+
+function togglePublicationFields(selectElement) {
+    var journalFields = selectElement.closest('.publication-entry').querySelector('.journal-fields');
+    var bookFields = selectElement.closest('.publication-entry').querySelector('.book-fields');
+
+    if (selectElement.value === 'Journal') {
+        journalFields.style.display = 'block';
+        bookFields.style.display = 'none';
+    } else if (selectElement.value === 'Book') {
+        journalFields.style.display = 'none';
+        bookFields.style.display = 'block';
+    } else {
+        journalFields.style.display = 'none';
+        bookFields.style.display = 'none';
+    }
+}
+
+
 function addRemoveButtonListener() {
     var removeEducationButtons = document.querySelectorAll('.remove-education');
     removeEducationButtons.forEach(function(button) {
@@ -408,6 +893,24 @@ function addRemoveButtonListener() {
         button.removeEventListener('click', removeExperienceEntry);
         button.addEventListener('click', removeExperienceEntry);
     });
+
+    var removeLanguageButtons = document.querySelectorAll('.remove-language');
+    removeLanguageButtons.forEach(function(button) {
+        button.removeEventListener('click', removeLanguageEntry);
+        button.addEventListener('click', removeLanguageEntry);
+    });
+
+    var removeResearchProjectButtons = document.querySelectorAll('.remove-research-project');
+    removeResearchProjectButtons.forEach(function(button) {
+        button.removeEventListener('click', removeResearchProjectEntry);
+        button.addEventListener('click', removeResearchProjectEntry);
+    });
+
+    var removePublicationButtons = document.querySelectorAll('.remove-publication');
+    removePublicationButtons.forEach(function(button) {
+        button.removeEventListener('click', removePublicationEntry);
+        button.addEventListener('click', removePublicationEntry);
+    });
 }
 
 function removeEducationEntry(event) {
@@ -418,6 +921,24 @@ function removeEducationEntry(event) {
 
 function removeExperienceEntry(event) {
     var entry = event.target.closest('.experience-entry');
+    entry.classList.remove('show');
+    setTimeout(() => entry.remove(), 300); // Remove element after transition
+}
+
+function removeLanguageEntry(event) {
+    var entry = event.target.closest('.language-entry');
+    entry.classList.remove('show');
+    setTimeout(() => entry.remove(), 300); // Remove element after transition
+}
+
+function removeResearchProjectEntry(event) {
+    var entry = event.target.closest('.research-project-entry');
+    entry.classList.remove('show');
+    setTimeout(() => entry.remove(), 300); // Remove element after transition
+}
+
+function removePublicationEntry(event) {
+    var entry = event.target.closest('.publication-entry');
     entry.classList.remove('show');
     setTimeout(() => entry.remove(), 300); // Remove element after transition
 }
