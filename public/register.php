@@ -194,35 +194,64 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <button type="button" id="add-education" class="btn btn-add-education">Add More Education</button>
         
         <h3>Experiences</h3>
+
+<div id="experience-section">
+    <div class="experience-entry show">
+        <label for="organization_type">Organization Type:<span>*</span></label>
+        <select id="organization_type" name="organization_type[]" required>
+            <option value="">--Select--</option>
+            <option value="University">University</option>
+            <option value="Research organization">Research organization</option>
+            <option value="Govt. job">Govt. job</option>
+            <option value="Private job">Private job</option>
+            <option value="Autonomous">Autonomous</option>
+            <option value="Others">Others</option>
+        </select>
+
+        <label for="organization_name">Organization Name:<span>*</span></label>
+        <input type="text" id="organization_name" name="organization_name[]" required>
+
+        <label for="experience_type">Experience Type:<span>*</span></label>
+        <select id="experience_type" name="experience_type[]" required>
+            <option value="">--Select--</option>
+            <option value="Teaching">Teaching</option>
+            <option value="Research">Research</option>
+            <option value="Others">Others</option>
+        </select>
+
+        <label for="designation">Designation:<span>*</span></label>
+        <input type="text" id="designation" name="designation[]" required>
+
+        <label for="start_date">Start Date:<span>*</span></label>
+        <input type="date" id="start_date" name="start_date[]" required>
+
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date[]">
+
+        <label for="basic_salary">Basic Salary:<span>*</span></label>
+        <input type="number" id="basic_salary" name="basic_salary[]" required>
+
+        <label for="pay_scale">Pay Scale:</label>
+        <input type="text" id="pay_scale" name="pay_scale[]">
+
+        <label for="details">Details:<span>*</span></label>
+        <textarea id="details" name="details[]" rows="3" required></textarea>
+
+        <label for="attachment">Attachment (Experience Certificate in pdf):<span>*</span></label>
+        <input type="file" id="attachment" name="attachment[]" accept="application/pdf" required>
+    </div>
+</div>
+
+            <button type="button" id="add-experience" class="btn btn-add-experience">Add More Experience</button>
         
-        <div id="experience-section">
-            <div class="experience-entry show">
-            <h4>Add Experience Info</h4>
-                <label for="organization">Organization:<span>*</span></label>
-                <input type="text" id="organization" name="organization[]" required>
-                
-                <label for="job_responsibilities">Job Responsibilities:<span>*</span></label>
-                <input type="text" id="job_responsibilities" name="job_responsibilities[]" required>
-                
-                <label for="joining_date">Joining Date:<span>*</span></label>
-                <input type="date" id="joining_date" name="joining_date[]" required>
-                
-                <label for="end_date">End Date:<span>*</span></label>
-                <input type="date" id="end_date" name="end_date[]" required>
-                
-                <label for="till_today">Till Today:</label>
-                <input type="checkbox" id="till_today" name="till_today[]" onchange="toggleEndDate(this)">
-                
-                <label for="attachment">Attachment (CV):<span>*</span></label>
-                <input type="file" id="attachment" name="attachment[]" required>
-            </div>
-        </div>
        
-        <button type="button" id="add-experience"class="btn btn-add-experience">Add More Experience</button>
-        <button type="submit" class="btn">Register</button>
+       
+
+            <button type="submit" class="btn">Register</button>
       
     </form>
 </main>
+
 
 <?php
 include_once '../includes/footer.php';
@@ -314,24 +343,49 @@ document.getElementById('add-experience').addEventListener('click', function() {
     newEntry.innerHTML = `
         <div>
             <h4>Add Experience Info</h4>
-            <label for="organization">Organization:<span>*</span></label>
-            <input type="text" id="organization" name="organization[]" required>
-            
-            <label for="job_responsibilities">Job Responsibilities:<span>*</span></label>
-            <input type="text" id="job_responsibilities" name="job_responsibilities[]" required>
-            
-            <label for="joining_date">Joining Date:<span>*</span></label>
-            <input type="date" id="joining_date" name="joining_date[]" required>
-            
-            <label for="end_date">End Date:<span>*</span></label>
-            <input type="date" id="end_date" name="end_date[]" required>
-            
-            <label for="till_today">Till Today:</label>
-            <input type="checkbox" id="till_today" name="till_today[]" onchange="toggleEndDate(this)">
-            
-            <label for="attachment">Attachment (CV):<span>*</span></label>
-            <input type="file" id="attachment" name="attachment[]" required>
-            
+            <label for="organization_type">Organization Type:<span>*</span></label>
+            <select id="organization_type" name="organization_type[]" required>
+                <option value="">--Select--</option>
+                <option value="University">University</option>
+                <option value="Research organization">Research organization</option>
+                <option value="Govt. job">Govt. job</option>
+                <option value="Private job">Private job</option>
+                <option value="Autonomous">Autonomous</option>
+                <option value="Others">Others</option>
+            </select>
+
+            <label for="organization_name">Organization Name:<span>*</span></label>
+            <input type="text" id="organization_name" name="organization_name[]" required>
+
+            <label for="experience_type">Experience Type:<span>*</span></label>
+            <select id="experience_type" name="experience_type[]" required>
+                <option value="">--Select--</option>
+                <option value="Teaching">Teaching</option>
+                <option value="Research">Research</option>
+                <option value="Others">Others</option>
+            </select>
+
+            <label for="designation">Designation:<span>*</span></label>
+            <input type="text" id="designation" name="designation[]" required>
+
+            <label for="start_date">Start Date:<span>*</span></label>
+            <input type="date" id="start_date" name="start_date[]" required>
+
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date[]">
+
+            <label for="basic_salary">Basic Salary:<span>*</span></label>
+            <input type="number" id="basic_salary" name="basic_salary[]" required>
+
+            <label for="pay_scale">Pay Scale:</label>
+            <input type="text" id="pay_scale" name="pay_scale[]">
+
+            <label for="details">Details:<span>*</span></label>
+            <textarea id="details" name="details[]" rows="3" required></textarea>
+
+            <label for="attachment">Attachment (Experience Certificate in pdf):<span>*</span></label>
+            <input type="file" id="attachment" name="attachment[]" accept="application/pdf" required>
+
             <button type="button" class="remove-experience">
                 <i class="fas fa-trash-alt"></i> Remove
             </button>
@@ -341,15 +395,6 @@ document.getElementById('add-experience').addEventListener('click', function() {
     setTimeout(() => newEntry.classList.add('show'), 10); // Add show class with a slight delay
     addRemoveButtonListener();
 });
-
-function toggleEndDate(checkbox) {
-    var endDateInput = checkbox.parentElement.querySelector('input[name="end_date[]"]');
-    if (checkbox.checked) {
-        endDateInput.disabled = true;
-    } else {
-        endDateInput.disabled = false;
-    }
-}
 
 function addRemoveButtonListener() {
     var removeEducationButtons = document.querySelectorAll('.remove-education');
