@@ -1,7 +1,10 @@
+/* General Styles */
 body {
     font-family: 'Roboto', Arial, sans-serif;
     color: #000000;
     background-color: #FFFFFF;
+    margin: 0;
+    padding: 0;
 }
 
 h2, h3 {
@@ -20,6 +23,7 @@ input, select, textarea {
     padding: 8px;
     margin-bottom: 10px;
     width: 100%;
+    box-sizing: border-box;
 }
 
 button {
@@ -29,6 +33,7 @@ button {
     padding: 10px 20px;
     border: none;
     cursor: pointer;
+    border-radius: 4px;
 }
 
 button:hover {
@@ -36,10 +41,122 @@ button:hover {
 }
 
 main {
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 30px;
     background-color: #fefae0;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.education-entry, .experience-entry {
+    position: relative;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    padding-right: 50px;
+    background-color: #FFFFFF;
+}
+
+.remove-education, .remove-experience {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background: none;
+    border: none;
+    color: #e76f51;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.remove-education i, .remove-experience i {
+    margin-right: 5px;
+}
+
+.btn {
+    font-family: 'Poppins', Arial, sans-serif;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    text-align: center;
+    display: inline-block;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #f4a261;
+}
+
+/* Specific styles for Add More Educatoin and Add More Experience button  */
+.btn-add-experience, .btn-add-education {
+    background-color: #e76f51; /* Accent Color */
+    color: #FFFFFF;
+}
+
+.btn-add-experience:hover, .btn-add-education:hover {
+    background-color: #f4a261; /* Hover Color */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Specific styles for Register button */
+.btn-register {
+    background-color: #2a9d8f; /* Primary Color */
+    color: #FFFFFF;
+}
+
+.btn-register:hover {
+    background-color: #264653; /* Secondary Color */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.education-entry .remove-education:hover, .experience-entry .remove-experience:hover {
+    color: #fff;
+    background-color: #c82333;
+}
+
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form label {
+    margin-bottom: 5px;
+}
+
+form input, form select, form textarea {
+    margin-bottom: 15px;
+}
+
+form button[type="submit"] {
+    align-self: flex-start;
+    background-color: #2a9d8f;
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+form button[type="submit"]:hover {
+    background-color: #f4a261;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    main {
+        padding: 20px;
+    }
+
+    .education-entry, .experience-entry {
+        padding-right: 30px;
+    }
+
+    .remove-education, .remove-experience {
+        right: 5px;
+        top: 5px;
+    }
 }
