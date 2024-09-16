@@ -421,13 +421,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <input type="url" id="book_web_url" name="book_web_url[]">
                 </div>
             </div>
-        </div>
+        </div>  
         <button type="button" id="add-publication" class="btn btn-add-publication">Add More Publication</button>
+        
+        <h3>Reference Info</h3>
+        <div id="reference-section">
+            <div class="reference-entry show">
+                <label for="reference_name">Name:<span>*</span></label>
+                <input type="text" id="reference_name" name="reference_name[]" required>
+        
+                <label for="reference_designation">Designation:<span>*</span></label>
+                <input type="text" id="reference_designation" name="reference_designation[]" required>
+        
+                <label for="reference_organization">Organization Name:<span>*</span></label>
+                <input type="text" id="reference_organization" name="reference_organization[]" required>
+        
+                <label for="reference_mobile">Mobile:<span>*</span></label>
+                <input type="text" id="reference_mobile" name="reference_mobile[]" required>
+        
+                <label for="reference_email">Email:<span>*</span></label>
+                <input type="email" id="reference_email" name="reference_email[]" required>
+            </div>
+        </div>
+        <button type="button" id="add-reference" class="btn btn-add-reference">Add More Reference</button>
+
         <div>
-        <label for="terms_conditions">
+            <label for="terms_conditions">
             <input type="checkbox" id="terms_conditions" name="terms_conditions" required>
             I agree to the <a href="#">terms and conditions</a>.
-</div>
+        </div>
         <button type="submit" class="btn">Register</button>
       
     </form>
@@ -880,6 +902,37 @@ function togglePublicationFields(selectElement) {
     }
 }
 
+document.getElementById('add-reference').addEventListener('click', function() {
+    var referenceSection = document.getElementById('reference-section');
+    var newEntry = document.createElement('div');
+    newEntry.classList.add('reference-entry');
+    newEntry.innerHTML = `
+        <div>
+            <h4>Add Reference Info</h4>
+            <label for="reference_name">Name:<span>*</span></label>
+            <input type="text" id="reference_name" name="reference_name[]" required>
+
+            <label for="reference_designation">Designation:<span>*</span></label>
+            <input type="text" id="reference_designation" name="reference_designation[]" required>
+
+            <label for="reference_organization">Organization Name:<span>*</span></label>
+            <input type="text" id="reference_organization" name="reference_organization[]" required>
+
+            <label for="reference_mobile">Mobile:<span>*</span></label>
+            <input type="text" id="reference_mobile" name="reference_mobile[]" required>
+
+            <label for="reference_email">Email:<span>*</span></label>
+            <input type="email" id="reference_email" name="reference_email[]" required>
+
+            <button type="button" class="remove-reference">
+                <i class="fas fa-trash-alt"></i> Remove
+            </button>
+        </div>
+    `;
+    referenceSection.appendChild(newEntry);
+    setTimeout(() => newEntry.classList.add('show'), 10); // Add show class with a slight delay
+    addRemoveButtonListener();
+});
 
 function addRemoveButtonListener() {
     var removeEducationButtons = document.querySelectorAll('.remove-education');
@@ -911,6 +964,13 @@ function addRemoveButtonListener() {
         button.removeEventListener('click', removePublicationEntry);
         button.addEventListener('click', removePublicationEntry);
     });
+
+    var removeReferenceButtons = document.querySelectorAll('.remove-reference');
+    removeReferenceButtons.forEach(function(button) {
+    button.removeEventListener('click', removeReferenceEntry);
+    button.addEventListener('click', removeReferenceEntry);
+    });
+    
 }
 
 function removeEducationEntry(event) {
@@ -939,6 +999,12 @@ function removeResearchProjectEntry(event) {
 
 function removePublicationEntry(event) {
     var entry = event.target.closest('.publication-entry');
+    entry.classList.remove('show');
+    setTimeout(() => entry.remove(), 300); // Remove element after transition
+}
+
+function removeReferenceEntry(event) {
+    var entry = event.target.closest('.reference-entry');
     entry.classList.remove('show');
     setTimeout(() => entry.remove(), 300); // Remove element after transition
 }
