@@ -1,128 +1,351 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 $pageTitle = 'Tutor Registration';
 $tutor_register = '../assets/css/tutor_register.css';
 include_once '../includes/header.php';
 include_once '../includes/functions.php';
 include_once '../includes/db.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
-    $password = hash_password($_POST['password']);
-    $name = $_POST['name'];
-    $father_name = $_POST['father_name'];
-    $mother_name = $_POST['mother_name'];
-    $nid = $_POST['nid'];
-    $passport = $_POST['passport'];
-    $dob = $_POST['dob'];
-    
+
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Database connection
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "seprojects";
+
+    // Create connection
+    $conn = new mysqli($servername, $username, $password, $dbname);
+
+    // Check connection
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+    // Sanitize and validate input data
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $name_en = htmlspecialchars($_POST['name_en']);
+    $name_bn = htmlspecialchars($_POST['name_bn']);
+    $father_name_en = htmlspecialchars($_POST['father_name_en']);
+    $mother_name_en = htmlspecialchars($_POST['mother_name_en']);
+    $mobile_number = htmlspecialchars($_POST['mobile_number']);
+    $dob = htmlspecialchars($_POST['dob']);
+    $birthplace = htmlspecialchars($_POST['birthplace']);
+    $nationality = htmlspecialchars($_POST['nationality']);
+    $nid_number = htmlspecialchars($_POST['nid_number']);
+    $passport_number = htmlspecialchars($_POST['passport_number']);
+    $passport_expiry_date = htmlspecialchars($_POST['passport_expiry_date']);
+    $gender = htmlspecialchars($_POST['gender']);
+    $marital_status = htmlspecialchars($_POST['marital_status']);
+    $mailing_address = htmlspecialchars($_POST['mailing_address']);
+    $permanent_village = htmlspecialchars($_POST['permanent_village']);
+    $permanent_post_office = htmlspecialchars($_POST['permanent_post_office']);
+    $permanent_police_station = htmlspecialchars($_POST['permanent_police_station']);
+    $permanent_upazilla = htmlspecialchars($_POST['permanent_upazilla']);
+    $permanent_district = htmlspecialchars($_POST['permanent_district']);
+    $present_village = htmlspecialchars($_POST['present_village']);
+    $present_post_office = htmlspecialchars($_POST['present_post_office']);
+    $present_police_station = htmlspecialchars($_POST['present_police_station']);
+    $present_upazilla = htmlspecialchars($_POST['present_upazilla']);
+    $present_district = htmlspecialchars($_POST['present_district']);
+
     // Handle file uploads
-    $photo = $_FILES['photo'];
-    $signature = $_FILES['signature'];
-    $cv = $_FILES['cv'];
+    $nid_copy = handleFileUpload('nid_copy');
+    $passport_copy = handleFileUpload('passport_copy');
+    $photo = handleFileUpload('photo');
+    $signature = handleFileUpload('signature');
+    $cv = handleFileUpload('cv');
 
-    // Validate and move uploaded files
-    $photo_path = 'uploads/' . basename($photo['name']);
-    $signature_path = 'uploads/' . basename($signature['name']);
-    $cv_path = 'uploads/' . basename($cv['name']);
-    
-    move_uploaded_file($photo['tmp_name'], $photo_path);
-    move_uploaded_file($signature['tmp_name'], $signature_path);
-    move_uploaded_file($cv['tmp_name'], $cv_path);
+    // Insert basic information into the tutor table
+    $stmt = $conn->prepare("INSERT INTO tutor (email, password, name_en, name_bn, father_name_en, mother_name_en, mobile_number, dob, birthplace, nationality, nid_number, nid_copy, passport_number, passport_expiry_date, passport_copy, gender, marital_status, mailing_address, permanent_village, permanent_post_office, permanent_police_station, permanent_upazilla, permanent_district, present_village, present_post_office, present_police_station, present_upazilla, present_district, photo, signature, cv) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssssssssssssssssssssssssssssss", $email, $password, $name_en, $name_bn, $father_name_en, $mother_name_en, $mobile_number, $dob, $birthplace, $nationality, $nid_number, $nid_copy, $passport_number, $passport_expiry_date, $passport_copy, $gender, $marital_status, $mailing_address, $permanent_village, $permanent_post_office, $permanent_police_station, $permanent_upazilla, $permanent_district, $present_village, $present_post_office, $present_police_station, $present_upazilla, $present_district, $photo, $signature, $cv);
+    $stmt->execute();
 
-    // Insert into tutors table
-    $sql = "INSERT INTO tutors (email, password, photo, signature, cv) VALUES (?, ?, ?, ?, ?)";
-    query($sql, [$email, $password, $photo_path, $signature_path, $cv_path]);
-    
     // Get the last inserted tutor ID
-    $tutor_id = get_last_insert_id();
-    
-    // Debugging: Check the value of tutor_id
-    if (!$tutor_id) {
-        die('Error: Unable to retrieve last insert ID.');
+    $tutor_id = $stmt->insert_id;
+
+    // Process educational qualifications
+    $education = [];
+    if (isset($_POST['degree_type'])) {
+        foreach ($_POST['degree_type'] as $index => $degree_type) {
+            $education[] = [
+                'degree_type' => htmlspecialchars($degree_type),
+                'exam_name' => htmlspecialchars($_POST['exam_name'][$index]),
+                'institute_name' => htmlspecialchars($_POST['institute_name'][$index]),
+                'board_name' => htmlspecialchars($_POST['board_name'][$index]),
+                'subject_group' => htmlspecialchars($_POST['subject_group'][$index]),
+                'study_from' => htmlspecialchars($_POST['study_from'][$index]),
+                'study_to' => htmlspecialchars($_POST['study_to'][$index]),
+                'passing_year' => htmlspecialchars($_POST['passing_year'][$index]),
+                'result_cgpa' => htmlspecialchars($_POST['result_cgpa'][$index]),
+                'cgpa_out_of' => htmlspecialchars($_POST['cgpa_out_of'][$index]),
+                'total_marks' => htmlspecialchars($_POST['total_marks'][$index]),
+                'supervisor_name_address' => htmlspecialchars($_POST['supervisor_name_address'][$index]),
+                'attachment_certificate' => handleFileUpload('attachment_certificate', $index)
+            ];
+
+            // Insert educational qualifications into the database
+            $stmt = $conn->prepare("INSERT INTO tutor_education (tutor_id, degree_type, exam_name, institute_name, board_name, subject_group, study_from, study_to, passing_year, result_cgpa, cgpa_out_of, total_marks, supervisor_name_address, attachment_certificate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("isssssssssssss", $tutor_id, $education[$index]['degree_type'], $education[$index]['exam_name'], $education[$index]['institute_name'], $education[$index]['board_name'], $education[$index]['subject_group'], $education[$index]['study_from'], $education[$index]['study_to'], $education[$index]['passing_year'], $education[$index]['result_cgpa'], $education[$index]['cgpa_out_of'], $education[$index]['total_marks'], $education[$index]['supervisor_name_address'], $education[$index]['attachment_certificate']);
+            $stmt->execute();
+        }
     }
-    
-    // Insert into educational_qualifications table
-    $degrees = $_POST['degree'];
-    $universities = $_POST['university'];
-    $majors = $_POST['major'];
-    $degree_durations = $_POST['degree_duration'];
-    $cgpas = $_POST['cgpa'];
-    $cgpa_out_ofs = $_POST['cgpa_out_of'];
-    
-    foreach ($degrees as $index => $degree) {
-        $university = $universities[$index];
-        $major = $majors[$index];
-        $degree_duration = $degree_durations[$index];
-        $cgpa = $cgpas[$index];
-        $cgpa_out_of = $cgpa_out_ofs[$index];
-        
-        $sql = "INSERT INTO educational_qualifications (tutor_id, degree, university, major, degree_duration, cgpa, cgpa_out_of) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        query($sql, [$tutor_id, $degree, $university, $major, $degree_duration, $cgpa, $cgpa_out_of]);
+
+    // Process experiences
+    $experiences = [];
+    if (isset($_POST['organization_type'])) {
+        foreach ($_POST['organization_type'] as $index => $organization_type) {
+            $experiences[] = [
+                'organization_type' => htmlspecialchars($organization_type),
+                'organization_name' => htmlspecialchars($_POST['organization_name'][$index]),
+                'experience_type' => htmlspecialchars($_POST['experience_type'][$index]),
+                'designation' => htmlspecialchars($_POST['designation'][$index]),
+                'start_date' => htmlspecialchars($_POST['start_date'][$index]),
+                'end_date' => htmlspecialchars($_POST['end_date'][$index]),
+                'basic_salary' => htmlspecialchars($_POST['basic_salary'][$index]),
+                'pay_scale' => htmlspecialchars($_POST['pay_scale'][$index]),
+                'details' => htmlspecialchars($_POST['details'][$index]),
+                'attachment' => handleFileUpload('attachment', $index)
+            ];
+
+            // Insert experiences into the database
+            $stmt = $conn->prepare("INSERT INTO tutor_experience (tutor_id, organization_type, organization_name, experience_type, designation, start_date, end_date, basic_salary, pay_scale, details, attachment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("issssssssss", $tutor_id, $experiences[$index]['organization_type'], $experiences[$index]['organization_name'], $experiences[$index]['experience_type'], $experiences[$index]['designation'], $experiences[$index]['start_date'], $experiences[$index]['end_date'], $experiences[$index]['basic_salary'], $experiences[$index]['pay_scale'], $experiences[$index]['details'], $experiences[$index]['attachment']);
+            $stmt->execute();
+        }
     }
-    
-    // Insert into experiences table
-    $organizations = $_POST['organization'];
-    $job_responsibilities = $_POST['job_responsibilities'];
-    $joining_dates = $_POST['joining_date'];
-    $end_dates = $_POST['end_date'];
-    $till_todays = isset($_POST['till_today']) ? $_POST['till_today'] : [];
-    $attachments = $_FILES['attachment'];
-    
-    foreach ($organizations as $index => $organization) {
-        $job_responsibility = $job_responsibilities[$index];
-        $joining_date = $joining_dates[$index];
-        $end_date = isset($till_todays[$index]) ? null : $end_dates[$index];
-        $till_today = isset($till_todays[$index]) ? 1 : 0;
-        
-        // Handle file upload for attachment
-        $attachment = $attachments['name'][$index];
-        $attachment_tmp = $attachments['tmp_name'][$index];
-        $attachment_path = 'uploads/' . basename($attachment);
-        move_uploaded_file($attachment_tmp, $attachment_path);
-        
-        $sql = "INSERT INTO experiences (tutor_id, organization, job_responsibilities, joining_date, end_date, till_today, attachment) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        query($sql, [$tutor_id, $organization, $job_responsibility, $joining_date, $end_date, $till_today, $attachment_path]);
+
+    // Process language proficiency
+    $languages = [];
+    if (isset($_POST['language'])) {
+        foreach ($_POST['language'] as $index => $language) {
+            $languages[] = [
+                'language' => htmlspecialchars($language),
+                'proficiency_level' => htmlspecialchars($_POST['proficiency_level'][$index])
+            ];
+
+            // Insert language proficiency into the database
+            $stmt = $conn->prepare("INSERT INTO tutor_language (tutor_id, language, proficiency_level) VALUES (?, ?, ?)");
+            $stmt->bind_param("iss", $tutor_id, $languages[$index]['language'], $languages[$index]['proficiency_level']);
+            $stmt->execute();
+        }
     }
-    
-    echo "Registration successful! Your application is under review.";
+
+    // Process research projects
+    $research_projects = [];
+    if (isset($_POST['title'])) {
+        foreach ($_POST['title'] as $index => $title) {
+            $research_projects[] = [
+                'title' => htmlspecialchars($title),
+                'funding_agency' => htmlspecialchars($_POST['funding_agency'][$index]),
+                'period' => htmlspecialchars($_POST['period'][$index]),
+                'funding_amount' => htmlspecialchars($_POST['funding_amount'][$index]),
+                'status' => htmlspecialchars($_POST['status'][$index])
+            ];
+
+            // Insert research projects into the database
+            $stmt = $conn->prepare("INSERT INTO tutor_research_project (tutor_id, title, funding_agency, period, funding_amount, status) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("isssss", $tutor_id, $research_projects[$index]['title'], $research_projects[$index]['funding_agency'], $research_projects[$index]['period'], $research_projects[$index]['funding_amount'], $research_projects[$index]['status']);
+            $stmt->execute();
+        }
+    }
+
+    // Process publications
+    $publications = [];
+    if (isset($_POST['publication_source'])) {
+        foreach ($_POST['publication_source'] as $index => $publication_source) {
+            $publications[] = [
+                'publication_source' => htmlspecialchars($publication_source),
+                'title' => htmlspecialchars($_POST['title'][$index]),
+                'authors' => htmlspecialchars($_POST['authors'][$index]),
+                'journal_name' => htmlspecialchars($_POST['journal_name'][$index]),
+                'year' => htmlspecialchars($_POST['year'][$index]),
+                'month' => htmlspecialchars($_POST['month'][$index]),
+                'pages' => htmlspecialchars($_POST['pages'][$index]),
+                'publisher' => htmlspecialchars($_POST['publisher'][$index]),
+                'volume' => htmlspecialchars($_POST['volume'][$index]),
+                'author_type' => htmlspecialchars($_POST['author_type'][$index]),
+                'issue' => htmlspecialchars($_POST['issue'][$index]),
+                'keywords' => htmlspecialchars($_POST['keywords'][$index]),
+                'impact_factor' => htmlspecialchars($_POST['impact_factor'][$index]),
+                'issn' => htmlspecialchars($_POST['issn'][$index]),
+                'doi' => htmlspecialchars($_POST['doi'][$index]),
+                'indexed_by' => htmlspecialchars($_POST['indexed_by'][$index]),
+                'web_url' => htmlspecialchars($_POST['web_url'][$index])
+            ];
+
+            // Insert publications into the database
+            $stmt = $conn->prepare("INSERT INTO tutor_publication (tutor_id, publication_source, title, authors, journal_name, year, month, pages, publisher, volume, author_type, issue, keywords, impact_factor, issn, doi, indexed_by, web_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("isssssssssssssssss", $tutor_id, $publications[$index]['publication_source'], $publications[$index]['title'], $publications[$index]['authors'], $publications[$index]['journal_name'], $publications[$index]['year'], $publications[$index]['month'], $publications[$index]['pages'], $publications[$index]['publisher'], $publications[$index]['volume'], $publications[$index]['author_type'], $publications[$index]['issue'], $publications[$index]['keywords'], $publications[$index]['impact_factor'], $publications[$index]['issn'], $publications[$index]['doi'], $publications[$index]['indexed_by'], $publications[$index]['web_url']);
+            $stmt->execute();
+        }
+    }
+
+    // Process references
+    $references = [];
+    if (isset($_POST['reference_name'])) {
+        foreach ($_POST['reference_name'] as $index => $reference_name) {
+            $references[] = [
+                'reference_name' => htmlspecialchars($reference_name),
+                'reference_designation' => htmlspecialchars($_POST['reference_designation'][$index]),
+                'reference_organization' => htmlspecialchars($_POST['reference_organization'][$index]),
+                'reference_mobile' => htmlspecialchars($_POST['reference_mobile'][$index]),
+                'reference_email' => htmlspecialchars($_POST['reference_email'][$index])
+            ];
+
+            // Insert references into the database
+            $stmt = $conn->prepare("INSERT INTO tutor_reference (tutor_id, reference_name, reference_designation, reference_organization, reference_mobile, reference_email) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("isssss", $tutor_id, $references[$index]['reference_name'], $references[$index]['reference_designation'], $references[$index]['reference_organization'], $references[$index]['reference_mobile'], $references[$index]['reference_email']);
+            $stmt->execute();
+        }
+    }
+
+    // Close the statement and connection
+    $stmt->close();
+    $conn->close();
+
+    // Redirect or display a success message
+    echo "Form submitted successfully!";
+}
+
+function handleFileUpload($fieldName, $index = null) {
+    if ($index !== null) {
+        $fieldName = $fieldName . '[' . $index . ']';
+    }
+    if (isset($_FILES[$fieldName]) && $_FILES[$fieldName]['error'] == UPLOAD_ERR_OK) {
+        $uploadDir = 'uploads/';
+        $uploadFile = $uploadDir . basename($_FILES[$fieldName]['name']);
+        if (move_uploaded_file($_FILES[$fieldName]['tmp_name'], $uploadFile)) {
+            return $uploadFile;
+        }
+    }
+    return null;
 }
 ?>
+
 <main>
     <h2>Register</h2>
-    <form method="POST" action="" enctype="multipart/form-data">
+    <form method="POST" action="register.php" enctype="multipart/form-data">
         <label for="email">Email:<span>*</span></label>
         <input type="email" id="email" name="email" required>
         
         <label for="password">Password:<span>*</span></label>
         <input type="password" id="password" name="password" required>
         
-        <label for="name">Name:<span>*</span></label>
-        <input type="text" id="name" name="name" required>
+        <h3>Basic Information</h3>
+        <div id="basic-info-section">
+            <label for="name_en">Name (In English):<span>*</span></label>
+            <input type="text" id="name_en" name="name_en" required>
         
-        <label for="father_name">Father's Name:<span>*</span></label>
-        <input type="text" id="father_name" name="father_name" required>
+            <label for="name_bn">Name (In Bangla):<span>*</span></label>
+            <input type="text" id="name_bn" name="name_bn" required>
         
-        <label for="mother_name">Mother's Name:<span>*</span></label>
-        <input type="text" id="mother_name" name="mother_name" required>
+            <label for="father_name_en">Father Name (In English):<span>*</span></label>
+            <input type="text" id="father_name_en" name="father_name_en" required>
         
-        <label for="nid">National ID:<span>*</span></label>
-        <input type="text" id="nid" name="nid" required>
+            <label for="mother_name_en">Mother Name (In English):<span>*</span></label>
+            <input type="text" id="mother_name_en" name="mother_name_en" required>
         
-        <label for="passport">Passport Number:<span>*</span></label>
-        <input type="text" id="passport" name="passport" required>
+            <label for="mobile_number">Mobile Number:<span>*</span></label>
+            <input type="text" id="mobile_number" name="mobile_number" placeholder="Example: 01XXXXXXXXX" required>
         
-        <label for="dob">Date of Birth:<span>*</span></label>
-        <input type="date" id="dob" name="dob" required>
+            <label for="dob">Date of Birth:<span>*</span></label>
+            <input type="date" id="dob" name="dob" required>
         
-        <label for="photo">Profile Photo:<span>*</span></label>
-        <input type="file" id="photo" name="photo" required>
+            <label for="birthplace">Birthplace:<span>*</span></label>
+            <input type="text" id="birthplace" name="birthplace" required>
         
-        <label for="signature">Signature:<span>*</span></label>
-        <input type="file" id="signature" name="signature" required>
+            <label for="nationality">Nationality:<span>*</span></label>
+            <select id="nationality" name="nationality" required>
+                <option value="">--Select--</option>
+                <option value="Bangladeshi">Bangladeshi</option>
+                <option value="Others">Others</option>
+            </select>
         
-        <label for="cv">CV:<span>*</span></label>
-        <input type="file" id="cv" name="cv" required>
+            <label for="nid_number">NID Number:<span>*</span></label>
+            <input type="number" id="nid_number" name="nid_number" required>
         
+            <label for="nid_copy">NID Copy:</label>
+            <input type="file" id="nid_copy" name="nid_copy" accept="application/pdf">
+        
+            <label for="passport_number">Passport Number:<span>*</span></label>
+            <input type="text" id="passport_number" name="passport_number" required>
+        
+            <label for="passport_expiry_date">Passport Expiry Date:<span>*</span></label>
+            <input type="date" id="passport_expiry_date" name="passport_expiry_date" required>
+        
+            <label for="passport_copy">Passport Copy:</label>
+            <input type="file" id="passport_copy" name="passport_copy" accept="application/pdf">
+        
+            <label for="gender">Gender:<span>*</span></label>
+            <select id="gender" name="gender" required>
+                <option value="">--Select--</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Others">Others</option>
+            </select>
+        
+            <label for="marital_status">Marital Status:<span>*</span></label>
+            <select id="marital_status" name="marital_status" required>
+                <option value="">--Select--</option>
+                <option value="Married">Married</option>
+                <option value="Unmarried">Unmarried</option>
+                <option value="Separated">Separated</option>
+                <option value="Divorced">Divorced</option>
+                <option value="Widowed">Widowed</option>
+            </select>
+        
+            <label for="mailing_address">Mailing Address:<span>*</span></label>
+            <textarea id="mailing_address" name="mailing_address" rows="3" required></textarea>
+        
+            <h4>Permanent Address</h4> 
+          
+            <label for="permanent_village">Village/Street:<span>*</span></label>
+            <input type="text" id="permanent_village" name="permanent_village" required>
+
+            <label for="permanent_post_office">Post Office:<span>*</span></label>
+            <input type="text" id="permanent_post_office" name="permanent_post_office" required>
+
+            <label for="permanent_police_station">Police Station:<span>*</span></label>
+            <input type="text" id="permanent_police_station" name="permanent_police_station" required>
+
+            <label for="permanent_upazilla">Upazilla/City Corporation:<span>*</span></label>
+            <input type="text" id="permanent_upazilla" name="permanent_upazilla" required>
+
+            <label for="permanent_district">District:<span>*</span></label>
+            <input type="text" id="permanent_district" name="permanent_district" required>
+        
+            <h4>Present Address</h4>
+
+            <label for="present_village">Village/Street:<span>*</span></label>
+            <input type="text" id="present_village" name="present_village" required>
+            
+            <label for="present_post_office">Post Office:<span>*</span></label>
+            <input type="text" id="present_post_office" name="present_post_office" required>
+
+            <label for="present_police_station">Police Station:<span>*</span></label>
+            <input type="text" id="present_police_station" name="present_police_station" required>   
+        
+            <label for="present_upazilla">Upazilla/City Corporation:<span>*</span></label>
+            <input type="text" id="present_upazilla" name="present_upazilla" required> 
+           
+            <label for="present_district">District:<span>*</span></label>
+            <input type="text" id="present_district" name="present_district" required>
+
+            <label for="photo">Profile Photo:<span>*</span></label>
+            <input type="file" id="photo" name="photo" required>
+                
+            <label for="signature">Signature:<span>*</span></label>
+            <input type="file" id="signature" name="signature" required>
+                
+            <label for="cv">CV:<span>*</span></label>
+            <input type="file" id="cv" name="cv" required>
+        </div>
+
         <h3>Educational Qualification</h3>
         
         <div id="education-section">
@@ -270,7 +493,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div id="research-project-section">
             <div class="research-project-entry show">
                 <label for="title">Title:</label>
-                <input type="text" id="title" name="title[]">
+                <input type="text" class="title" name="title[]">
         
                 <label for="funding_agency">Awarding/Funding Agency:</label>
                 <input type="text" id="funding_agency" name="funding_agency[]">
@@ -278,8 +501,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <label for="period">Period:</label>
                 <input type="text" id="period" name="period[]">
         
-                <label for="grant">Grant (in Lakh BDT):</label>
-                <input type="number" id="grant" name="grant[]">
+                <label for="funding_amount">Funding Amount (in Lakh BDT):</label>
+                <input type="number" id="funding_amount" name="funding_amount[]">
         
                 <label for="status">Status:</label>
                 <select id="status" name="status[]">
@@ -446,8 +669,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <button type="button" id="add-reference" class="btn btn-add-reference">Add More Reference</button>
 
         <div>
-            <label for="terms_conditions">
-            <input type="checkbox" id="terms_conditions" name="terms_conditions" required>
+            <label for="terms_conditions" class="terms-conditions">
+            <input type="checkbox" id="terms_conditions" name="terms_conditions" class="terms-conditions" required>
             I agree to the <a href="#">terms and conditions</a>.
         </div>
         <button type="submit" class="btn">Register</button>
@@ -644,8 +867,8 @@ document.getElementById('add-research-project').addEventListener('click', functi
             <label for="period">Period:</label>
             <input type="text" id="period" name="period[]">
 
-            <label for="grant">Grant (in Lakh BDT):</label>
-            <input type="number" id="grant" name="grant[]">
+            <label for="funding_amount">Funding Amount (in Lakh BDT):</label>
+            <input type="number" id="funding_amount" name="funding_amount[]">
 
             <label for="status">Status:</label>
             <select id="status" name="status[]">

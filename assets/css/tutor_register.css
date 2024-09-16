@@ -145,6 +145,14 @@ form button[type="submit"]:hover {
     background-color: #f4a261;
 }
 
+.terms-conditions {
+    display: flex;
+    align-items: flex-start;
+}
+.terms-conditions label {
+   margin-left: 2px;  /*Adjust the spacing as needed */
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     main {

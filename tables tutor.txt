@@ -1,0 +1,132 @@
+CREATE TABLE tutors (
+    tutor_id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    name_en VARCHAR(255) NOT NULL,
+    name_bn VARCHAR(255) NOT NULL,
+    father_name_en VARCHAR(255) NOT NULL,
+    mother_name_en VARCHAR(255) NOT NULL,
+    mobile_number VARCHAR(20) NOT NULL,
+    dob DATE NOT NULL,
+    birthplace VARCHAR(255) NOT NULL,
+    nationality VARCHAR(50) NOT NULL,
+    nid_number VARCHAR(50) NOT NULL,
+    nid_copy VARCHAR(255),
+    passport_number VARCHAR(50) NOT NULL,
+    passport_expiry_date DATE NOT NULL,
+    passport_copy VARCHAR(255),
+    gender VARCHAR(10) NOT NULL,
+    marital_status VARCHAR(20) NOT NULL,
+    mailing_address TEXT NOT NULL,
+    permanent_village VARCHAR(255) NOT NULL,
+    permanent_post_office VARCHAR(255) NOT NULL,
+    permanent_police_station VARCHAR(255) NOT NULL,
+    permanent_upazilla VARCHAR(255) NOT NULL,
+    permanent_district VARCHAR(255) NOT NULL,
+    present_village VARCHAR(255) NOT NULL,
+    present_post_office VARCHAR(255) NOT NULL,
+    present_police_station VARCHAR(255) NOT NULL,
+    present_upazilla VARCHAR(255) NOT NULL,
+    present_district VARCHAR(255) NOT NULL,
+    photo VARCHAR(255),
+    signature VARCHAR(255),
+    cv VARCHAR(255)
+);
+
+CREATE TABLE tutor_education (
+    education_id INT AUTO_INCREMENT PRIMARY KEY,
+    tutor_id INT NOT NULL,
+    degree_type VARCHAR(255) NOT NULL,
+    exam_name VARCHAR(255) NOT NULL,
+    institute_name VARCHAR(255) NOT NULL,
+    board_name VARCHAR(255),
+    subject_group VARCHAR(255) NOT NULL,
+    study_from DATE NOT NULL,
+    study_to DATE NOT NULL,
+    passing_year INT NOT NULL,
+    result_cgpa DECIMAL(4, 2) NOT NULL,
+    cgpa_out_of DECIMAL(4, 2) NOT NULL,
+    total_marks INT,
+    supervisor_name_address TEXT,
+    attachment_certificate VARCHAR(255),
+    FOREIGN KEY (tutor_id) REFERENCES tutors(tutor_id) ON DELETE CASCADE
+);
+
+CREATE TABLE tutor_experience (
+    experience_id INT AUTO_INCREMENT PRIMARY KEY,
+    tutor_id INT NOT NULL,
+    organization_type VARCHAR(255) NOT NULL,
+    organization_name VARCHAR(255) NOT NULL,
+    experience_type VARCHAR(255) NOT NULL,
+    designation VARCHAR(255) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    basic_salary DECIMAL(10, 2) NOT NULL,
+    pay_scale VARCHAR(255),
+    details TEXT NOT NULL,
+    attachment VARCHAR(255),
+    FOREIGN KEY (tutor_id) REFERENCES tutors(tutor_id) ON DELETE CASCADE
+);
+
+CREATE TABLE tutor_language (
+    language_id INT AUTO_INCREMENT PRIMARY KEY,
+    tutor_id INT NOT NULL,
+    language VARCHAR(255) NOT NULL,
+    proficiency_level VARCHAR(50) NOT NULL,
+    FOREIGN KEY (tutor_id) REFERENCES tutors(tutor_id) ON DELETE CASCADE
+);
+
+CREATE TABLE tutor_research_project (
+    project_id INT AUTO_INCREMENT PRIMARY KEY,
+    tutor_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    funding_agency VARCHAR(255),
+    period VARCHAR(255),
+    funding_amount VARCHAR(50),
+    status VARCHAR(50),
+    FOREIGN KEY (tutor_id) REFERENCES tutors(tutor_id) ON DELETE CASCADE
+);
+
+CREATE TABLE tutor_publication (
+    publication_id INT AUTO_INCREMENT PRIMARY KEY,
+    tutor_id INT NOT NULL,
+    publication_source VARCHAR(50) NOT NULL, -- 'Book' or 'Journal'
+    title VARCHAR(255) NOT NULL,
+    authors TEXT,
+    journal_name VARCHAR(255),
+    year INT,
+    month VARCHAR(50),
+    pages VARCHAR(50),
+    publisher VARCHAR(255),
+    volume VARCHAR(50),
+    author_type VARCHAR(50),
+    issue VARCHAR(50),
+    keywords TEXT,
+    impact_factor VARCHAR(50),
+    issn VARCHAR(50),
+    doi VARCHAR(50),
+    indexed_by TEXT,
+    web_url VARCHAR(255),
+    book_title VARCHAR(255),
+    book_authors TEXT,
+    book_year INT,
+    book_month VARCHAR(50),
+    city VARCHAR(255),
+    book_publisher VARCHAR(255),
+    book_keywords TEXT,
+    book_impact_factor VARCHAR(50),
+    isbn VARCHAR(50),
+    book_web_url VARCHAR(255),
+    FOREIGN KEY (tutor_id) REFERENCES tutors(tutor_id) ON DELETE CASCADE
+);
+
+CREATE TABLE tutor_reference (
+    reference_id INT AUTO_INCREMENT PRIMARY KEY,
+    tutor_id INT NOT NULL,
+    reference_name VARCHAR(255) NOT NULL,
+    reference_designation VARCHAR(255) NOT NULL,
+    reference_organization VARCHAR(255) NOT NULL,
+    reference_mobile VARCHAR(20) NOT NULL,
+    reference_email VARCHAR(255) NOT NULL,
+    FOREIGN KEY (tutor_id) REFERENCES tutors(tutor_id) ON DELETE CASCADE
+);
