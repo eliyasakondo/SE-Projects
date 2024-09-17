@@ -227,3 +227,9 @@ Create guides for tutors, students, and reviewers on how to use the system.
 **4.2. Training:**
 
 Provide training sessions or materials for users to familiarize themselves with the new system.
+
+![Publications of Tutor if he has journal ](image.png)
+
+![last part if he has journal and the book option ](image-1.png)
+
+![Last part of publication who choosen book](image-2.png)

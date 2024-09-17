@@ -79,11 +79,11 @@ CREATE TABLE tutor_language (
 CREATE TABLE tutor_research_project (
     project_id INT AUTO_INCREMENT PRIMARY KEY,
     tutor_id INT NOT NULL,
-    title VARCHAR(255) NOT NULL,
+    research_title VARCHAR(255) NOT NULL,
     funding_agency VARCHAR(255),
-    period VARCHAR(255),
+    research_period VARCHAR(255),
     funding_amount VARCHAR(50),
-    status VARCHAR(50),
+    research_status VARCHAR(50),
     FOREIGN KEY (tutor_id) REFERENCES tutors(tutor_id) ON DELETE CASCADE
 );
 
@@ -91,13 +91,13 @@ CREATE TABLE tutor_publication (
     publication_id INT AUTO_INCREMENT PRIMARY KEY,
     tutor_id INT NOT NULL,
     publication_source VARCHAR(50) NOT NULL, -- 'Book' or 'Journal'
-    title VARCHAR(255) NOT NULL,
+    title VARCHAR(255) NOT NULL, -- Title for both journals and books
     authors TEXT,
     journal_name VARCHAR(255),
     year INT,
     month VARCHAR(50),
     pages VARCHAR(50),
-    publisher VARCHAR(255),
+    publisher VARCHAR(255), -- Publisher for both journals and books
     volume VARCHAR(50),
     author_type VARCHAR(50),
     issue VARCHAR(50),
@@ -106,17 +106,9 @@ CREATE TABLE tutor_publication (
     issn VARCHAR(50),
     doi VARCHAR(50),
     indexed_by TEXT,
-    web_url VARCHAR(255),
-    book_title VARCHAR(255),
-    book_authors TEXT,
-    book_year INT,
-    book_month VARCHAR(50),
+    web_url VARCHAR(255), -- Common field
     city VARCHAR(255),
-    book_publisher VARCHAR(255),
-    book_keywords TEXT,
-    book_impact_factor VARCHAR(50),
     isbn VARCHAR(50),
-    book_web_url VARCHAR(255),
     FOREIGN KEY (tutor_id) REFERENCES tutors(tutor_id) ON DELETE CASCADE
 );
 

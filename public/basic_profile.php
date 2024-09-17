@@ -1,5 +1,6 @@
 <?php
 error_reporting(E_ALL);
+ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 
 $pageTitle = 'Tutor Registration';
@@ -165,7 +166,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ];
 
             // Insert research projects into the database
-            $stmt = $conn->prepare("INSERT INTO tutor_research_project (tutor_id, title, funding_agency, period, funding_amount, status) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt = $conn->prepare("INSERT INTO tutor_research_project (tutor_id, research_title, funding_agency, research_period, funding_amount, research_status) VALUES (?, ?, ?, ?, ?, ?)");
             if ($stmt === false) {
                 die("Prepare failed: " . $conn->error);
             }
@@ -177,6 +178,122 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
 
+            // Process publications
+    if (isset($_POST['publication_source'])) {
+        foreach ($_POST['publication_source'] as $index => $publication_source) {
+            $publication_source = htmlspecialchars($publication_source);
+
+            // Initialize all fields to null
+            $journal_title = null;
+            $journal_authors = null;
+            $journal_year = null;
+            $journal_month = null;
+            $journal_keywords = null;
+            $journal_impact_factor = null;
+            $journal_indexed_by = null;
+            $journal_web_url = null;
+            $journal_name = null;
+            $journal_pages = null;
+            $journal_publisher = null;
+            $journal_volume = null;
+            $journal_author_type = null;
+            $journal_issue = null;
+            $journal_issn = null;
+            $journal_doi = null;
+
+            $book_title = null;
+            $book_authors = null;
+            $book_year = null;
+            $book_month = null;
+            $book_keywords = null;
+            $book_impact_factor = null;
+            $book_indexed_by = null;
+            $book_web_url = null;
+            $book_publisher = null;
+            $book_city = null;
+            $book_isbn = null;
+
+            // Journal-specific fields
+            if ($publication_source === 'Journal') {
+                $journal_title = isset($_POST['journal_title'][$index]) ? htmlspecialchars($_POST['journal_title'][$index]) : null;
+                $journal_authors = isset($_POST['journal_authors'][$index]) ? htmlspecialchars($_POST['journal_authors'][$index]) : null;
+                $journal_year = isset($_POST['journal_year'][$index]) ? htmlspecialchars($_POST['journal_year'][$index]) : null;
+                $journal_month = isset($_POST['journal_month'][$index]) ? htmlspecialchars($_POST['journal_month'][$index]) : null;
+                $journal_keywords = isset($_POST['journal_keywords'][$index]) ? htmlspecialchars($_POST['journal_keywords'][$index]) : null;
+                $journal_impact_factor = isset($_POST['journal_impact_factor'][$index]) ? htmlspecialchars($_POST['journal_impact_factor'][$index]) : null;
+                $journal_indexed_by = isset($_POST['journal_indexed_by'][$index]) ? htmlspecialchars($_POST['journal_indexed_by'][$index]) : null;
+                $journal_web_url = isset($_POST['journal_web_url'][$index]) ? htmlspecialchars($_POST['journal_web_url'][$index]) : null;
+                $journal_name = isset($_POST['journal_name'][$index]) ? htmlspecialchars($_POST['journal_name'][$index]) : null;
+                $journal_pages = isset($_POST['journal_pages'][$index]) ? htmlspecialchars($_POST['journal_pages'][$index]) : null;
+                $journal_publisher = isset($_POST['journal_publisher'][$index]) ? htmlspecialchars($_POST['journal_publisher'][$index]) : null;
+                $journal_volume = isset($_POST['journal_volume'][$index]) ? htmlspecialchars($_POST['journal_volume'][$index]) : null;
+                $journal_author_type = isset($_POST['journal_author_type'][$index]) ? htmlspecialchars($_POST['journal_author_type'][$index]) : null;
+                $journal_issue = isset($_POST['journal_issue'][$index]) ? htmlspecialchars($_POST['journal_issue'][$index]) : null;
+                $journal_issn = isset($_POST['journal_issn'][$index]) ? htmlspecialchars($_POST['journal_issn'][$index]) : null;
+                $journal_doi = isset($_POST['journal_doi'][$index]) ? htmlspecialchars($_POST['journal_doi'][$index]) : null;
+            }
+            // Book-specific fields
+            elseif ($publication_source === 'Book') {
+                $book_title = isset($_POST['book_title'][$index]) ? htmlspecialchars($_POST['book_title'][$index]) : null;
+                $book_authors = isset($_POST['book_authors'][$index]) ? htmlspecialchars($_POST['book_authors'][$index]) : null;
+                $book_year = isset($_POST['book_year'][$index]) ? htmlspecialchars($_POST['book_year'][$index]) : null;
+                $book_month = isset($_POST['book_month'][$index]) ? htmlspecialchars($_POST['book_month'][$index]) : null;
+                $book_keywords = isset($_POST['book_keywords'][$index]) ? htmlspecialchars($_POST['book_keywords'][$index]) : null;
+                $book_impact_factor = isset($_POST['book_impact_factor'][$index]) ? htmlspecialchars($_POST['book_impact_factor'][$index]) : null;
+                $book_indexed_by = isset($_POST['book_indexed_by'][$index]) ? htmlspecialchars($_POST['book_indexed_by'][$index]) : null;
+                $book_web_url = isset($_POST['book_web_url'][$index]) ? htmlspecialchars($_POST['book_web_url'][$index]) : null;
+                $book_publisher = isset($_POST['book_publisher'][$index]) ? htmlspecialchars($_POST['book_publisher'][$index]) : null;
+                $book_city = isset($_POST['book_city'][$index]) ? htmlspecialchars($_POST['book_city'][$index]) : null;
+                $book_isbn = isset($_POST['book_isbn'][$index]) ? htmlspecialchars($_POST['book_isbn'][$index]) : null;
+            }
+
+            // Insert publications into the database
+            $stmt = $conn->prepare("INSERT INTO tutor_publication (
+                tutor_id, publication_source, journal_title, journal_authors, journal_year, journal_month, journal_keywords, journal_impact_factor, journal_indexed_by, journal_web_url, journal_name, journal_pages, journal_publisher, journal_volume, journal_author_type, journal_issue, journal_issn, journal_doi, book_title, book_authors, book_year, book_month, book_keywords, book_impact_factor, book_indexed_by, book_web_url, book_publisher, book_city, book_isbn
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            if ($stmt === false) {
+                die("Prepare failed: " . htmlspecialchars($conn->error));
+            }
+            $stmt->bind_param(
+                "isssssssssssssssssssssssssssss",
+                $tutor_id,
+                $publication_source,
+                $journal_title,
+                $journal_authors,
+                $journal_year,
+                $journal_month,
+                $journal_keywords,
+                $journal_impact_factor,
+                $journal_indexed_by,
+                $journal_web_url,
+                $journal_name,
+                $journal_pages,
+                $journal_publisher,
+                $journal_volume,
+                $journal_author_type,
+                $journal_issue,
+                $journal_issn,
+                $journal_doi,
+                $book_title,
+                $book_authors,
+                $book_year,
+                $book_month,
+                $book_keywords,
+                $book_impact_factor,
+                $book_indexed_by,
+                $book_web_url,
+                $book_publisher,
+                $book_city,
+                $book_isbn
+            );
+            if ($stmt->execute() === false) {
+                die('Error executing statement: ' . htmlspecialchars($stmt->error));
+            }
+        }
+    }
+
+
+    
    // $conn->close();
 
     // Redirect or display a success message
@@ -512,6 +629,10 @@ function handleFileUploadArray($fieldName, $index) {
         </div>
         <button type="button" id="add-research-project" class="btn btn-add-research-project">Add More Research Project</button>
 
+        <h3>Publications</h3>
+        <div id="publication-section">
+        </div>
+        <button type="button" id="add-publication" class="btn btn-add-publication">Add  Publication</button>
         <div>
             <label for="terms_conditions" class="terms-conditions">
             <input type="checkbox" id="terms_conditions" name="terms_conditions" class="terms-conditions" required>
@@ -732,6 +853,231 @@ document.getElementById('add-research-project').addEventListener('click', functi
     addRemoveButtonListener();
 });
 
+//publication section add more button event listener and function to add new publication entry fields dynamically 
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('add-publication').addEventListener('click', function() {
+        var publicationSection = document.getElementById('publication-section');
+        var newEntry = document.createElement('div');
+        newEntry.classList.add('publication-entry');
+        newEntry.innerHTML = `
+            <div>
+                <h4>Add Publication Info</h4>
+                <label for="publication_source">Publication Source:<span>*</span></label>
+                <select name="publication_source[]" required onchange="togglePublicationFields(this)">
+                    <option value="">--Select--</option>
+                    <option value="Journal">Journal</option>
+                    <option value="Book">Book</option>
+                </select>
+
+                <div class="journal-fields" style="display: none;">
+                    <label for="journal_title">Title:<span>*</span></label>
+                    <input type="text" name="journal_title[]">
+
+                    <label for="authors">Author(s): 
+                        <small>Use comma(,) to separate multiple authors(s)</small>
+                    </label>
+                    <input type="text" name="authors[]">
+
+                    <label for="journal_name">Journal Name:</label>
+                    <input type="text" name="journal_name[]">
+
+                    <label for="year">Year:<span>*</span></label>
+                    <select name="year[]">
+                        <option value="">--Select Year--</option>
+                        ${generateYearOptions()}
+                    </select>
+
+                    <label for="month">Month:<span>*</span></label>
+                    <select name="month[]">
+                        <option value="">--Select--</option>
+                        ${generateMonthOptions()}
+                    </select>
+
+                    <label for="pages">Pages:</label>
+                    <input type="text" name="pages[]">
+
+                    <label for="publisher">Publisher:</label>
+                    <input type="text" name="publisher[]">
+
+                    <label for="volume">Volume:</label>
+                    <input type="text" name="volume[]">
+
+                    <label for="author_type">Type of Author:</label>
+                    <select name="author_type[]">
+                        <option value="">--Select--</option>
+                        <option value="Principle">Principle</option>
+                        <option value="Corresponding">Corresponding</option>
+                    </select>
+
+                    <label for="issue">Issue:</label>
+                    <input type="text" name="issue[]">
+
+                    <label for="keywords">Keyword(s):<small>Use comma(,) to separate multiple keyword(s)</small></label>
+                    <input type="text" name="keywords[]">
+
+                    <label for="impact_factor">Impact Factor/Cite Score (If any):</label>
+                    <input type="text" name="impact_factor[]">
+
+                    <label for="issn">ISSN:</label>
+                    <input type="text" name="issn[]">
+
+                    <label for="doi">DOI:</label>
+                    <input type="text" name="doi[]">
+
+                    <label for="indexed_by">Indexed By(s):<small>Use comma(,) to Indexed multiple separate By(s)</small></label>
+                    <input type="text" name="indexed_by[]">
+
+                    <label for="web_url">Web Url:</label>
+                    <input type="url" name="web_url[]">
+                </div>
+
+                <div class="book-fields" style="display: none;">
+                    <label for="book_title">Book Title:<span>*</span></label>
+                    <input type="text" name="book_title[]">
+
+                    <label for="book_authors">Author(s):<small>Use comma(,) to separate multiple authors(s)</small></label>
+                    <input type="text" name="book_authors[]">
+
+                    <label for="book_year">Year:<span>*</span></label>
+                    <select name="book_year[]">
+                        <option value="">--Select Year--</option>
+                        ${generateYearOptions()}
+                    </select>
+
+                    <label for="book_month">Month:<span>*</span></label>
+                    <select name="book_month[]">
+                        <option value="">--Select--</option>
+                        ${generateMonthOptions()}
+                    </select>
+
+                    <label for="city">City:</label>
+                    <input type="text" name="city[]">
+
+                    <label for="book_publisher">Book Publisher:</label>
+                    <input type="text" name="book_publisher[]">
+
+                    <label for="book_keywords">Keyword(s): <small>Use comma(,) to separate multiple keyword(s)</small></label>
+                    <input type="text" name="book_keywords[]">
+
+                    <label for="book_impact_factor">Impact Factor/Cite Score (If any):</label>
+                    <input type="text" name="book_impact_factor[]">
+
+                    <label for="indexed_by">Indexed By(s): <small>Use comma(,) to Indexed multiple separate By(s)</small></label>
+                    <input type="text" name="indexed_by[]">
+
+                    <label for="isbn">ISBN No:</label>
+                    <input type="text" name="isbn[]">
+
+                    <label for="book_web_url">Web Url:</label>
+                    <input type="url" name="book_web_url[]">
+                </div>
+
+                <button type="button" class="remove-publication">
+                    <i class="fas fa-trash-alt"></i> Remove
+                </button>
+            </div>
+        `;
+        publicationSection.appendChild(newEntry);
+        setTimeout(() => newEntry.classList.add('show'), 10); // Add show class with a slight delay
+        addRemoveButtonListener();
+    });
+
+    window.togglePublicationFields = function(selectElement) {
+        var journalFields = selectElement.closest('.publication-entry').querySelector('.journal-fields');
+        var bookFields = selectElement.closest('.publication-entry').querySelector('.book-fields');
+
+        if (selectElement.value === 'Journal') {
+            journalFields.style.display = 'block';
+            bookFields.style.display = 'none';
+            journalFields.querySelectorAll('input, select').forEach(function(input) {
+                input.setAttribute('required', 'required');
+            });
+            bookFields.querySelectorAll('input, select').forEach(function(input) {
+                input.removeAttribute('required');
+            });
+        } else if (selectElement.value === 'Book') {
+            journalFields.style.display = 'none';
+            bookFields.style.display = 'block';
+            bookFields.querySelectorAll('input, select').forEach(function(input) {
+                input.setAttribute('required', 'required');
+            });
+            journalFields.querySelectorAll('input, select').forEach(function(input) {
+                input.removeAttribute('required');
+            });
+        } else {
+            journalFields.style.display = 'none';
+            bookFields.style.display = 'none';
+            journalFields.querySelectorAll('input, select').forEach(function(input) {
+                input.removeAttribute('required');
+            });
+            bookFields.querySelectorAll('input, select').forEach(function(input) {
+                input.removeAttribute('required');
+            });
+        }
+    }
+
+    function addRemoveButtonListener() {
+        var removePublicationButtons = document.querySelectorAll('.remove-publication');
+        removePublicationButtons.forEach(function(button) {
+            button.removeEventListener('click', removePublicationEntry);
+            button.addEventListener('click', removePublicationEntry);
+        });
+    }
+
+    function removePublicationEntry(event) {
+        var entry = event.target.closest('.publication-entry');
+        entry.classList.remove('show');
+        setTimeout(() => entry.remove(), 300); // Remove element after transition
+    }
+
+    function generateYearOptions() {
+        const currentYear = new Date().getFullYear();
+        let options = '';
+        for (let year = currentYear; year >= 1990; year--) {
+            options += `<option value="${year}">${year}</option>`;
+        }
+        return options;
+    }
+
+    function generateMonthOptions() {
+        const months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        return months.map(month => `<option value="${month}">${month}</option>`).join('');
+    }
+
+    // Handle form submission
+    document.querySelector('form').addEventListener('submit', function(event) {
+        var publicationEntries = document.querySelectorAll('.publication-entry');
+        publicationEntries.forEach(function(entry) {
+            var journalFields = entry.querySelector('.journal-fields');
+            var bookFields = entry.querySelector('.book-fields');
+
+            if (journalFields.style.display === 'none') {
+                journalFields.querySelectorAll('input, select').forEach(function(input) {
+                    input.removeAttribute('required');
+                });
+            }
+
+            if (bookFields.style.display === 'none') {
+                bookFields.querySelectorAll('input, select').forEach(function(input) {
+                    input.removeAttribute('required');
+                });
+            }
+        });
+    });
+
+    // Initialize remove button listeners for any existing entries
+    addRemoveButtonListener();
+});
+
+
+// Add remove button listener for education, experience, language, and research project entries
+// This function should be called whenever a new entry is added
+// This function should also be called when the page is loaded to initialize remove button listeners for existing entries
+// This function should be called after adding a new entry to initialize remove button listener for the new entry
+// This function should be called after removing an entry to reinitialize remove button listeners for the remaining entries
 function addRemoveButtonListener() {
     var removeEducationButtons = document.querySelectorAll('.remove-education');
     removeEducationButtons.forEach(function(button) {
@@ -757,8 +1103,11 @@ function addRemoveButtonListener() {
         button.addEventListener('click', removeResearchProjectEntry);
     });
 
+   
+
 }
 
+// Remove button event listeners and functions for education, experience, language, and research project entries
 function removeEducationEntry(event) {
     var entry = event.target.closest('.education-entry');
     entry.classList.remove('show');
@@ -782,6 +1131,8 @@ function removeResearchProjectEntry(event) {
     entry.classList.remove('show');
     setTimeout(() => entry.remove(), 300); // Remove element after transition
 }
+
+
 
 // Initialize remove button listeners for any existing entries
 addRemoveButtonListener();
