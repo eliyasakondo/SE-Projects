@@ -64,7 +64,7 @@ CREATE TABLE tutor_experience (
     basic_salary DECIMAL(10, 2) NOT NULL,
     pay_scale VARCHAR(255),
     details TEXT NOT NULL,
-    attachment VARCHAR(255),
+    experience_attachment VARCHAR(255),
     FOREIGN KEY (tutor_id) REFERENCES tutors(tutor_id) ON DELETE CASCADE
 );
 

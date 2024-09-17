@@ -126,19 +126,63 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 'basic_salary' => htmlspecialchars($_POST['basic_salary'][$index]),
                 'pay_scale' => htmlspecialchars($_POST['pay_scale'][$index]),
                 'details' => htmlspecialchars($_POST['details'][$index]),
-                'attachment_experience' => handleFileUploadArray('attachment_experience', $index)
+                'experience_attachment' => handleFileUploadArray('experience_attachment', $index)
             ];
 
             // Insert experiences into the database
-            $stmt = $conn->prepare("INSERT INTO tutor_experience (tutor_id, organization_type, organization_name, experience_type, designation, start_date, end_date, basic_salary, pay_scale, details, attachment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("issssssssss", $tutor_id, $experiences[$index]['organization_type'], $experiences[$index]['organization_name'], $experiences[$index]['experience_type'], $experiences[$index]['designation'], $experiences[$index]['start_date'], $experiences[$index]['end_date'], $experiences[$index]['basic_salary'], $experiences[$index]['pay_scale'], $experiences[$index]['details'], $experiences[$index]['attachment_experience']);
+            $stmt = $conn->prepare("INSERT INTO tutor_experience (tutor_id, organization_type, organization_name, experience_type, designation, start_date, end_date, basic_salary, pay_scale, details, experience_attachment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("issssssssss", $tutor_id, $experiences[$index]['organization_type'], $experiences[$index]['organization_name'], $experiences[$index]['experience_type'], $experiences[$index]['designation'], $experiences[$index]['start_date'], $experiences[$index]['end_date'], $experiences[$index]['basic_salary'], $experiences[$index]['pay_scale'], $experiences[$index]['details'], $experiences[$index]['experience_attachment']);
+            $stmt->execute();
+        }
+    }
+    
+    // Process language proficiency
+    $languages = [];
+    if (isset($_POST['language'])) {
+        foreach ($_POST['language'] as $index => $language) {
+            $languages[] = [
+                'language' => htmlspecialchars($language),
+                'proficiency_level' => htmlspecialchars($_POST['proficiency_level'][$index])
+            ];
+
+            // Insert language proficiency into the database
+            $stmt = $conn->prepare("INSERT INTO tutor_language (tutor_id, language, proficiency_level) VALUES (?, ?, ?)");
+            $stmt->bind_param("iss", $tutor_id, $languages[$index]['language'], $languages[$index]['proficiency_level']);
             $stmt->execute();
         }
     }
 
+    // Process research projects
+    $research_projects = [];
+    if (isset($_POST['research_title'])) {
+        foreach ($_POST['research_title'] as $index => $research_title) {
+            $research_projects[] = [
+                'research_title' => htmlspecialchars($research_title),
+                'funding_agency' => htmlspecialchars($_POST['funding_agency'][$index]),
+                'research_period' => htmlspecialchars($_POST['research_period'][$index]),
+                'funding_amount' => htmlspecialchars($_POST['funding_amount'][$index]),
+                'research_status' => htmlspecialchars($_POST['research_status'][$index])
+            ];
+
+            // Insert research projects into the database
+            $stmt = $conn->prepare("INSERT INTO tutor_research_project (tutor_id, title, funding_agency, period, funding_amount, status) VALUES (?, ?, ?, ?, ?, ?)");
+            if ($stmt === false) {
+                die("Prepare failed: " . $conn->error);
+            }
+            $stmt->bind_param("isssss", $tutor_id, $research_projects[$index]['research_title'], $research_projects[$index]['funding_agency'], $research_projects[$index]['research_period'], $research_projects[$index]['funding_amount'], $research_projects[$index]['research_status']);
+            if ($stmt->execute() === false) {
+                die("Execute failed: " . $stmt->error);
+            }
+        }
+    }
+
+
+   // $conn->close();
+
     // Redirect or display a success message
     echo "Form submitted successfully!";
 }
+
 //Single File Upload
 function handleFileUpload($fieldName, $index = null) {
     if ($index !== null) {
@@ -416,15 +460,58 @@ function handleFileUploadArray($fieldName, $index) {
                 <label for="details">Details:<span>*</span></label>
                 <textarea id="details" name="details[]" rows="3" required></textarea>
         
-                <label for="attachment_experience">Attachment (Experience Certificate in pdf):<span>*</span></label>
-                <input type="file" id="attachment_experience" name="attachment_experience[]" accept="application/pdf" required>
+                <label for="experience_attachment">Attachment (Experience Certificate in pdf):<span>*</span></label>
+                <input type="file" id="experience_attachment" name="experience_attachment[]" accept="application/pdf" required>
             </div>
         </div>
-        
-        
         <button type="button" id="add-experience" class="btn btn-add-experience">Add More Experience</button>
+         
+        <h3>Language Proficiency</h3>
 
+        <div id="language-section">
+            <div class="language-entry show">
+                <label for="language">Language:<span>*</span></label>
+                <input type="text" id="language" name="language[]" required>
         
+                <label for="proficiency_level">Proficiency Level:<span>*</span></label>
+                <select id="proficiency_level" name="proficiency_level[]" required>
+                    <option value="">--Select--</option>
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Professional">Professional</option>
+                    <option value="Fluent">Fluent</option>
+                    <option value="Native/Bi-lingual">Native/Bi-lingual</option>
+                </select>
+            </div>
+        </div>
+        <button type="button" id="add-language" class="btn btn-add-language">Add Language Proficiency</button>
+        
+        <h3>Research Project Info</h3>
+        
+        <div id="research-project-section">
+            <div class="research-project-entry show">
+                <label for="research_title">Title:</label>
+                <input type="text" class="research_title" name="research_title[]">
+        
+                <label for="funding_agency">Awarding/Funding Agency:</label>
+                <input type="text" id="funding_agency" name="funding_agency[]">
+        
+                <label for="research_period">Period:</label>
+                <input type="text" id="research_period" name="research_period[]">
+        
+                <label for="funding_amount">Funding Amount (in Lakh BDT):</label>
+                <input type="number" id="funding_amount" name="funding_amount[]">
+        
+                <label for="research_status">Status:</label>
+                <select id="research_status" name="research_status[]">
+                    <option value="">--Select--</option>
+                    <option value="Ongoing">Ongoing</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
+        </div>
+        <button type="button" id="add-research-project" class="btn btn-add-research-project">Add More Research Project</button>
+
         <div>
             <label for="terms_conditions" class="terms-conditions">
             <input type="checkbox" id="terms_conditions" name="terms_conditions" class="terms-conditions" required>
@@ -566,8 +653,8 @@ document.getElementById('add-experience').addEventListener('click', function() {
             <label for="details">Details:<span>*</span></label>
             <textarea id="details" name="details[]" rows="3" required></textarea>
 
-            <label for="attachment_experience">Attachment (Experience Certificate in pdf):<span>*</span></label>
-            <input type="file" id="attachment_experience" name="attachment_experience[]" accept="application/pdf" required>
+            <label for="experience_attachment">Attachment (Experience Certificate in pdf):<span>*</span></label>
+            <input type="file" id="experience_attachment" name="experience_attachment[]" accept="application/pdf" required>
 
             <button type="button" class="remove-experience">
                 <i class="fas fa-trash-alt"></i> Remove
@@ -579,16 +666,119 @@ document.getElementById('add-experience').addEventListener('click', function() {
     addRemoveButtonListener();
 });
 
+document.getElementById('add-language').addEventListener('click', function() {
+    var languageSection = document.getElementById('language-section');
+    var newEntry = document.createElement('div');
+    newEntry.classList.add('language-entry');
+    newEntry.innerHTML = `
+        <div>
+            <h4>Add Language Proficiency</h4>
+            <label for="language">Language:<span>*</span></label>
+            <input type="text" id="language" name="language[]" required>
+
+            <label for="proficiency_level">Proficiency Level:<span>*</span></label>
+            <select id="proficiency_level" name="proficiency_level[]" required>
+                <option value="">--Select--</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Professional">Professional</option>
+                <option value="Fluent">Fluent</option>
+                <option value="Native/Bi-lingual">Native/Bi-lingual</option>
+            </select>
+
+            <button type="button" class="remove-language">
+                <i class="fas fa-trash-alt"></i> Remove
+            </button>
+        </div>
+    `;
+    languageSection.appendChild(newEntry);
+    setTimeout(() => newEntry.classList.add('show'), 10); // Add show class with a slight delay
+    addRemoveButtonListener();
+});
+
+document.getElementById('add-research-project').addEventListener('click', function() {
+    var researchProjectSection = document.getElementById('research-project-section');
+    var newEntry = document.createElement('div');
+    newEntry.classList.add('research-project-entry');
+    newEntry.innerHTML = `
+        <div>
+            <h4>Add Research Project Info</h4>
+            <label for="research_title">Title:</label>
+            <input type="text" class="research_title" name="research_title[]">
+        
+            <label for="funding_agency">Awarding/Funding Agency:</label>
+            <input type="text" id="funding_agency" name="funding_agency[]">
+        
+            <label for="research_period">Period:</label>
+            <input type="text" id="research_period" name="research_period[]">
+        
+            <label for="funding_amount">Funding Amount (in Lakh BDT):</label>
+            <input type="number" id="funding_amount" name="funding_amount[]">
+        
+            <label for="research_status">Status:</label>
+            <select id="research_status" name="research_status[]">
+                <option value="">--Select--</option>
+                <option value="Ongoing">Ongoing</option>
+                <option value="Completed">Completed</option>
+            </select>
+
+            <button type="button" class="remove-research-project">
+                <i class="fas fa-trash-alt"></i> Remove
+            </button>
+        </div>
+    `;
+    researchProjectSection.appendChild(newEntry);
+    setTimeout(() => newEntry.classList.add('show'), 10); // Add show class with a slight delay
+    addRemoveButtonListener();
+});
+
 function addRemoveButtonListener() {
     var removeEducationButtons = document.querySelectorAll('.remove-education');
     removeEducationButtons.forEach(function(button) {
         button.removeEventListener('click', removeEducationEntry);
         button.addEventListener('click', removeEducationEntry);
     });
+
+    var removeExperienceButtons = document.querySelectorAll('.remove-experience');
+    removeExperienceButtons.forEach(function(button) {
+        button.removeEventListener('click', removeExperienceEntry);
+        button.addEventListener('click', removeExperienceEntry);
+    });
+
+    var removeLanguageButtons = document.querySelectorAll('.remove-language');
+    removeLanguageButtons.forEach(function(button) {
+        button.removeEventListener('click', removeLanguageEntry);
+        button.addEventListener('click', removeLanguageEntry);
+    });
+
+    var removeResearchProjectButtons = document.querySelectorAll('.remove-research-project');
+    removeResearchProjectButtons.forEach(function(button) {
+        button.removeEventListener('click', removeResearchProjectEntry);
+        button.addEventListener('click', removeResearchProjectEntry);
+    });
+
 }
 
 function removeEducationEntry(event) {
     var entry = event.target.closest('.education-entry');
+    entry.classList.remove('show');
+    setTimeout(() => entry.remove(), 300); // Remove element after transition
+}
+
+function removeExperienceEntry(event) {
+    var entry = event.target.closest('.experience-entry');
+    entry.classList.remove('show');
+    setTimeout(() => entry.remove(), 300); // Remove element after transition
+}
+
+function removeLanguageEntry(event) {
+    var entry = event.target.closest('.language-entry');
+    entry.classList.remove('show');
+    setTimeout(() => entry.remove(), 300); // Remove element after transition
+}
+
+function removeResearchProjectEntry(event) {
+    var entry = event.target.closest('.research-project-entry');
     entry.classList.remove('show');
     setTimeout(() => entry.remove(), 300); // Remove element after transition
 }
