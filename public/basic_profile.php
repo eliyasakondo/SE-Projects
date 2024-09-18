@@ -1,4 +1,5 @@
 <?php
+
 error_reporting(E_ALL);
 ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
@@ -178,121 +179,125 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
 
-            // Process publications
-    if (isset($_POST['publication_source'])) {
-        foreach ($_POST['publication_source'] as $index => $publication_source) {
-            $publication_source = htmlspecialchars($publication_source);
+    // Process publications
+    
+    // Process publications
+if (isset($_POST['publication_source'])) {
+    foreach ($_POST['publication_source'] as $index => $publication_source) {
+        $publication_source = htmlspecialchars($publication_source);
 
-            // Initialize all fields to null
-            $journal_title = null;
-            $journal_authors = null;
-            $journal_year = null;
-            $journal_month = null;
-            $journal_keywords = null;
-            $journal_impact_factor = null;
-            $journal_indexed_by = null;
-            $journal_web_url = null;
-            $journal_name = null;
-            $journal_pages = null;
-            $journal_publisher = null;
-            $journal_volume = null;
-            $journal_author_type = null;
-            $journal_issue = null;
-            $journal_issn = null;
-            $journal_doi = null;
+        // Initialize all fields to null
+        $journal_title = null;
+        $journal_authors = null;
+        $journal_year = null;
+        $journal_month = null;
+        $journal_keywords = null;
+        $journal_impact_factor = null;
+        $journal_indexed_by = null;
+        $journal_web_url = null;
+        $journal_name = null;
+        $journal_pages = null;
+        $journal_publisher = null;
+        $journal_volume = null;
+        $journal_author_type = null;
+        $journal_issue = null;
+        $journal_issn = null;
+        $journal_doi = null;
 
-            $book_title = null;
-            $book_authors = null;
-            $book_year = null;
-            $book_month = null;
-            $book_keywords = null;
-            $book_impact_factor = null;
-            $book_indexed_by = null;
-            $book_web_url = null;
-            $book_publisher = null;
-            $book_city = null;
-            $book_isbn = null;
+        $book_title = null;
+        $book_authors = null;
+        $book_year = null;
+        $book_month = null;
+        $book_keywords = null;
+        $book_impact_factor = null;
+        $book_indexed_by = null;
+        $book_web_url = null;
+        $book_publisher = null;
+        $book_city = null;
+        $book_isbn = null;
 
-            // Journal-specific fields
-            if ($publication_source === 'Journal') {
-                $journal_title = isset($_POST['journal_title'][$index]) ? htmlspecialchars($_POST['journal_title'][$index]) : null;
-                $journal_authors = isset($_POST['journal_authors'][$index]) ? htmlspecialchars($_POST['journal_authors'][$index]) : null;
-                $journal_year = isset($_POST['journal_year'][$index]) ? htmlspecialchars($_POST['journal_year'][$index]) : null;
-                $journal_month = isset($_POST['journal_month'][$index]) ? htmlspecialchars($_POST['journal_month'][$index]) : null;
-                $journal_keywords = isset($_POST['journal_keywords'][$index]) ? htmlspecialchars($_POST['journal_keywords'][$index]) : null;
-                $journal_impact_factor = isset($_POST['journal_impact_factor'][$index]) ? htmlspecialchars($_POST['journal_impact_factor'][$index]) : null;
-                $journal_indexed_by = isset($_POST['journal_indexed_by'][$index]) ? htmlspecialchars($_POST['journal_indexed_by'][$index]) : null;
-                $journal_web_url = isset($_POST['journal_web_url'][$index]) ? htmlspecialchars($_POST['journal_web_url'][$index]) : null;
-                $journal_name = isset($_POST['journal_name'][$index]) ? htmlspecialchars($_POST['journal_name'][$index]) : null;
-                $journal_pages = isset($_POST['journal_pages'][$index]) ? htmlspecialchars($_POST['journal_pages'][$index]) : null;
-                $journal_publisher = isset($_POST['journal_publisher'][$index]) ? htmlspecialchars($_POST['journal_publisher'][$index]) : null;
-                $journal_volume = isset($_POST['journal_volume'][$index]) ? htmlspecialchars($_POST['journal_volume'][$index]) : null;
-                $journal_author_type = isset($_POST['journal_author_type'][$index]) ? htmlspecialchars($_POST['journal_author_type'][$index]) : null;
-                $journal_issue = isset($_POST['journal_issue'][$index]) ? htmlspecialchars($_POST['journal_issue'][$index]) : null;
-                $journal_issn = isset($_POST['journal_issn'][$index]) ? htmlspecialchars($_POST['journal_issn'][$index]) : null;
-                $journal_doi = isset($_POST['journal_doi'][$index]) ? htmlspecialchars($_POST['journal_doi'][$index]) : null;
-            }
-            // Book-specific fields
-            elseif ($publication_source === 'Book') {
-                $book_title = isset($_POST['book_title'][$index]) ? htmlspecialchars($_POST['book_title'][$index]) : null;
-                $book_authors = isset($_POST['book_authors'][$index]) ? htmlspecialchars($_POST['book_authors'][$index]) : null;
-                $book_year = isset($_POST['book_year'][$index]) ? htmlspecialchars($_POST['book_year'][$index]) : null;
-                $book_month = isset($_POST['book_month'][$index]) ? htmlspecialchars($_POST['book_month'][$index]) : null;
-                $book_keywords = isset($_POST['book_keywords'][$index]) ? htmlspecialchars($_POST['book_keywords'][$index]) : null;
-                $book_impact_factor = isset($_POST['book_impact_factor'][$index]) ? htmlspecialchars($_POST['book_impact_factor'][$index]) : null;
-                $book_indexed_by = isset($_POST['book_indexed_by'][$index]) ? htmlspecialchars($_POST['book_indexed_by'][$index]) : null;
-                $book_web_url = isset($_POST['book_web_url'][$index]) ? htmlspecialchars($_POST['book_web_url'][$index]) : null;
-                $book_publisher = isset($_POST['book_publisher'][$index]) ? htmlspecialchars($_POST['book_publisher'][$index]) : null;
-                $book_city = isset($_POST['book_city'][$index]) ? htmlspecialchars($_POST['book_city'][$index]) : null;
-                $book_isbn = isset($_POST['book_isbn'][$index]) ? htmlspecialchars($_POST['book_isbn'][$index]) : null;
-            }
+        // Journal-specific fields
+        if ($publication_source === 'Journal') {
+            $journal_title = isset($_POST['journal_title'][$index]) ? htmlspecialchars($_POST['journal_title'][$index]) : null;
+            $journal_authors = isset($_POST['journal_authors'][$index]) ? htmlspecialchars($_POST['journal_authors'][$index]) : null;
+            $journal_year = isset($_POST['journal_year'][$index]) ? htmlspecialchars($_POST['journal_year'][$index]) : null;
+            $journal_month = isset($_POST['journal_month'][$index]) ? htmlspecialchars($_POST['journal_month'][$index]) : null;
+            $journal_keywords = isset($_POST['journal_keywords'][$index]) ? htmlspecialchars($_POST['journal_keywords'][$index]) : null;
+            $journal_impact_factor = isset($_POST['journal_impact_factor'][$index]) ? htmlspecialchars($_POST['journal_impact_factor'][$index]) : null;
+            $journal_indexed_by = isset($_POST['journal_indexed_by'][$index]) ? htmlspecialchars($_POST['journal_indexed_by'][$index]) : null;
+            $journal_web_url = isset($_POST['journal_web_url'][$index]) ? htmlspecialchars($_POST['journal_web_url'][$index]) : null;
+            $journal_name = isset($_POST['journal_name'][$index]) ? htmlspecialchars($_POST['journal_name'][$index]) : null;
+            $journal_pages = isset($_POST['journal_pages'][$index]) ? htmlspecialchars($_POST['journal_pages'][$index]) : null;
+            $journal_publisher = isset($_POST['journal_publisher'][$index]) ? htmlspecialchars($_POST['journal_publisher'][$index]) : null;
+            $journal_volume = isset($_POST['journal_volume'][$index]) ? htmlspecialchars($_POST['journal_volume'][$index]) : null;
+            $journal_author_type = isset($_POST['journal_author_type'][$index]) ? htmlspecialchars($_POST['journal_author_type'][$index]) : null;
+            $journal_issue = isset($_POST['journal_issue'][$index]) ? htmlspecialchars($_POST['journal_issue'][$index]) : null;
+            $journal_issn = isset($_POST['journal_issn'][$index]) ? htmlspecialchars($_POST['journal_issn'][$index]) : null;
+            $journal_doi = isset($_POST['journal_doi'][$index]) ? htmlspecialchars($_POST['journal_doi'][$index]) : null;
+        }
+        // Book-specific fields
+        elseif ($publication_source === 'Book') {
+            $book_title = isset($_POST['book_title'][$index]) ? htmlspecialchars($_POST['book_title'][$index]) : null;
+            $book_authors = isset($_POST['book_authors'][$index]) ? htmlspecialchars($_POST['book_authors'][$index]) : null;
+            $book_year = isset($_POST['book_year'][$index]) ? htmlspecialchars($_POST['book_year'][$index]) : null;
+            $book_month = isset($_POST['book_month'][$index]) ? htmlspecialchars($_POST['book_month'][$index]) : null;
+            $book_keywords = isset($_POST['book_keywords'][$index]) ? htmlspecialchars($_POST['book_keywords'][$index]) : null;
+            $book_impact_factor = isset($_POST['book_impact_factor'][$index]) ? htmlspecialchars($_POST['book_impact_factor'][$index]) : null;
+            $book_indexed_by = isset($_POST['book_indexed_by'][$index]) ? htmlspecialchars($_POST['book_indexed_by'][$index]) : null;
+            $book_web_url = isset($_POST['book_web_url'][$index]) ? htmlspecialchars($_POST['book_web_url'][$index]) : null;
+            $book_publisher = isset($_POST['book_publisher'][$index]) ? htmlspecialchars($_POST['book_publisher'][$index]) : null;
+            $book_city = isset($_POST['book_city'][$index]) ? htmlspecialchars($_POST['book_city'][$index]) : null;
+            $book_isbn = isset($_POST['book_isbn'][$index]) ? htmlspecialchars($_POST['book_isbn'][$index]) : null;
+        }
 
-            // Insert publications into the database
-            $stmt = $conn->prepare("INSERT INTO tutor_publication (
-                tutor_id, publication_source, journal_title, journal_authors, journal_year, journal_month, journal_keywords, journal_impact_factor, journal_indexed_by, journal_web_url, journal_name, journal_pages, journal_publisher, journal_volume, journal_author_type, journal_issue, journal_issn, journal_doi, book_title, book_authors, book_year, book_month, book_keywords, book_impact_factor, book_indexed_by, book_web_url, book_publisher, book_city, book_isbn
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            if ($stmt === false) {
-                die("Prepare failed: " . htmlspecialchars($conn->error));
-            }
-            $stmt->bind_param(
-                "isssssssssssssssssssssssssssss",
-                $tutor_id,
-                $publication_source,
-                $journal_title,
-                $journal_authors,
-                $journal_year,
-                $journal_month,
-                $journal_keywords,
-                $journal_impact_factor,
-                $journal_indexed_by,
-                $journal_web_url,
-                $journal_name,
-                $journal_pages,
-                $journal_publisher,
-                $journal_volume,
-                $journal_author_type,
-                $journal_issue,
-                $journal_issn,
-                $journal_doi,
-                $book_title,
-                $book_authors,
-                $book_year,
-                $book_month,
-                $book_keywords,
-                $book_impact_factor,
-                $book_indexed_by,
-                $book_web_url,
-                $book_publisher,
-                $book_city,
-                $book_isbn
-            );
-            if ($stmt->execute() === false) {
-                die('Error executing statement: ' . htmlspecialchars($stmt->error));
-            }
+        // Insert publications into the database
+        $stmt = $conn->prepare("INSERT INTO tutor_publication (
+            tutor_id, publication_source, journal_title, journal_authors, journal_year, journal_month, journal_keywords, journal_impact_factor, journal_indexed_by, journal_web_url, journal_name, journal_pages, journal_publisher, journal_volume, journal_author_type, journal_issue, journal_issn, journal_doi, book_title, book_authors, book_year, book_month, book_keywords, book_impact_factor, book_indexed_by, book_web_url, book_publisher, book_city, book_isbn
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        if ($stmt === false) {
+            error_log("Prepare failed: " . htmlspecialchars($conn->error), 3, "C:/xampp/htdocs/dev/SE-Projects/logs/error.log");
+            die("Prepare failed: " . htmlspecialchars($conn->error));
+        }
+        $stmt->bind_param(
+            "issssssssssssssssssssssssssss",
+            $tutor_id,
+            $publication_source,
+            $journal_title,
+            $journal_authors,
+            $journal_year,
+            $journal_month,
+            $journal_keywords,
+            $journal_impact_factor,
+            $journal_indexed_by,
+            $journal_web_url,
+            $journal_name,
+            $journal_pages,
+            $journal_publisher,
+            $journal_volume,
+            $journal_author_type,
+            $journal_issue,
+            $journal_issn,
+            $journal_doi,
+            $book_title,
+            $book_authors,
+            $book_year,
+            $book_month,
+            $book_keywords,
+            $book_impact_factor,
+            $book_indexed_by,
+            $book_web_url,
+            $book_publisher,
+            $book_city,
+            $book_isbn
+        );
+        if ($stmt->execute() === false) {
+            error_log("Execute failed: " . htmlspecialchars($stmt->error), 3, "C:/xampp/htdocs/dev/SE-Projects/logs/error.log");
+            die('Error executing statement: ' . htmlspecialchars($stmt->error));
         }
     }
+}
 
-
+error_log("Prepare failed: " . htmlspecialchars($conn->error), 3, "C:/xampp/htdocs/dev/SE-Projects/logs/error.log");
     
    // $conn->close();
 
@@ -854,6 +859,7 @@ document.getElementById('add-research-project').addEventListener('click', functi
 });
 
 //publication section add more button event listener and function to add new publication entry fields dynamically 
+
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('add-publication').addEventListener('click', function() {
         var publicationSection = document.getElementById('publication-section');
