@@ -526,11 +526,14 @@ function handleFileUploadArray($fieldName, $index) {
                 <label for="passing_year">Passing Year:<span>*</span></label>
                 <select id="passing_year" name="passing_year[]" required>
                     <option value="">--Select--</option>
+                    <?php echo generateYearOptions() ?>
+                    <!--
                     <option value="2024">2024</option>
                     <option value="2023">2023</option>
                     <option value="2022">2022</option>
                     <option value="2021">2021</option>
                     <option value="2020">2020</option>
+-->
                 </select>
                 
                 <label for="result_cgpa">Result/CGPA:<span>*</span></label>
@@ -1082,7 +1085,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function generateYearOptions() {
         const currentYear = new Date().getFullYear();
         let options = '';
-        for (let year = currentYear; year >= 1990; year--) {
+        for (let year = currentYear; year >= 1947; year--) {
             options += `<option value="${year}">${year}</option>`;
         }
         return options;
