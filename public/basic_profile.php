@@ -297,6 +297,24 @@ if (isset($_POST['publication_source'])) {
     }
 }
 
+ // Process references
+ $references = [];
+ if (isset($_POST['reference_name'])) {
+     foreach ($_POST['reference_name'] as $index => $reference_name) {
+         $references[] = [
+             'reference_name' => htmlspecialchars($reference_name),
+             'reference_designation' => htmlspecialchars($_POST['reference_designation'][$index]),
+             'reference_organization' => htmlspecialchars($_POST['reference_organization'][$index]),
+             'reference_mobile' => htmlspecialchars($_POST['reference_mobile'][$index]),
+             'reference_email' => htmlspecialchars($_POST['reference_email'][$index])
+         ];
+
+         // Insert references into the database
+         $stmt = $conn->prepare("INSERT INTO tutor_reference (tutor_id, reference_name, reference_designation, reference_organization, reference_mobile, reference_email) VALUES (?, ?, ?, ?, ?, ?)");
+         $stmt->bind_param("isssss", $tutor_id, $references[$index]['reference_name'], $references[$index]['reference_designation'], $references[$index]['reference_organization'], $references[$index]['reference_mobile'], $references[$index]['reference_email']);
+         $stmt->execute();
+     }
+ }
 error_log("Prepare failed: " . htmlspecialchars($conn->error), 3, "C:/xampp/htdocs/dev/SE-Projects/logs/error.log");
     
    // $conn->close();
@@ -638,6 +656,28 @@ function handleFileUploadArray($fieldName, $index) {
         <div id="publication-section">
         </div>
         <button type="button" id="add-publication" class="btn btn-add-publication">Add  Publication</button>
+          
+        <h3>Reference Info</h3>
+        <div id="reference-section">
+            <div class="reference-entry show">
+                <label for="reference_name">Name:<span>*</span></label>
+                <input type="text" id="reference_name" name="reference_name[]" required>
+        
+                <label for="reference_designation">Designation:<span>*</span></label>
+                <input type="text" id="reference_designation" name="reference_designation[]" required>
+        
+                <label for="reference_organization">Organization Name:<span>*</span></label>
+                <input type="text" id="reference_organization" name="reference_organization[]" required>
+        
+                <label for="reference_mobile">Mobile:<span>*</span></label>
+                <input type="text" id="reference_mobile" name="reference_mobile[]" required>
+        
+                <label for="reference_email">Email:<span>*</span></label>
+                <input type="email" id="reference_email" name="reference_email[]" required>
+            </div>
+        </div>
+        <button type="button" id="add-reference" class="btn btn-add-reference">Add More Reference</button>
+
         <div>
             <label for="terms_conditions" class="terms-conditions">
             <input type="checkbox" id="terms_conditions" name="terms_conditions" class="terms-conditions" required>
@@ -988,6 +1028,8 @@ document.addEventListener('DOMContentLoaded', function() {
         addRemoveButtonListener();
     });
 
+    
+
     window.togglePublicationFields = function(selectElement) {
         var journalFields = selectElement.closest('.publication-entry').querySelector('.journal-fields');
         var bookFields = selectElement.closest('.publication-entry').querySelector('.book-fields');
@@ -1022,6 +1064,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    
     function addRemoveButtonListener() {
         var removePublicationButtons = document.querySelectorAll('.remove-publication');
         removePublicationButtons.forEach(function(button) {
@@ -1078,6 +1121,37 @@ document.addEventListener('DOMContentLoaded', function() {
     addRemoveButtonListener();
 });
 
+document.getElementById('add-reference').addEventListener('click', function() {
+    var referenceSection = document.getElementById('reference-section');
+    var newEntry = document.createElement('div');
+    newEntry.classList.add('reference-entry');
+    newEntry.innerHTML = `
+        <div>
+            <h4>Add Reference Info</h4>
+            <label for="reference_name">Name:<span>*</span></label>
+            <input type="text" id="reference_name" name="reference_name[]" required>
+
+            <label for="reference_designation">Designation:<span>*</span></label>
+            <input type="text" id="reference_designation" name="reference_designation[]" required>
+
+            <label for="reference_organization">Organization Name:<span>*</span></label>
+            <input type="text" id="reference_organization" name="reference_organization[]" required>
+
+            <label for="reference_mobile">Mobile:<span>*</span></label>
+            <input type="text" id="reference_mobile" name="reference_mobile[]" required>
+
+            <label for="reference_email">Email:<span>*</span></label>
+            <input type="email" id="reference_email" name="reference_email[]" required>
+
+            <button type="button" class="remove-reference">
+                <i class="fas fa-trash-alt"></i> Remove
+            </button>
+        </div>
+    `;
+    referenceSection.appendChild(newEntry);
+    setTimeout(() => newEntry.classList.add('show'), 10); // Add show class with a slight delay
+    addRemoveButtonListener();
+});
 
 // Add remove button listener for education, experience, language, and research project entries
 // This function should be called whenever a new entry is added
@@ -1109,7 +1183,11 @@ function addRemoveButtonListener() {
         button.addEventListener('click', removeResearchProjectEntry);
     });
 
-   
+    var removeReferenceButtons = document.querySelectorAll('.remove-reference');
+    removeReferenceButtons.forEach(function(button) {
+    button.removeEventListener('click', removeReferenceEntry);
+    button.addEventListener('click', removeReferenceEntry);
+    });
 
 }
 
@@ -1138,6 +1216,11 @@ function removeResearchProjectEntry(event) {
     setTimeout(() => entry.remove(), 300); // Remove element after transition
 }
 
+function removeReferenceEntry(event) {
+    var entry = event.target.closest('.reference-entry');
+    entry.classList.remove('show');
+    setTimeout(() => entry.remove(), 300); // Remove element after transition
+}
 
 
 // Initialize remove button listeners for any existing entries

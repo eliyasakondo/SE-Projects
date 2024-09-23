@@ -1,5 +1,7 @@
 <?php
+
 error_reporting(E_ALL);
+ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 
 $pageTitle = 'Tutor Registration';
@@ -8,10 +10,7 @@ include_once '../includes/header.php';
 include_once '../includes/functions.php';
 include_once '../includes/db.php';
 
-
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Database connection
     $servername = "localhost";
     $username = "root";
     $password = "";
@@ -23,6 +22,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check connection
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
+    }
+
+    // Ensure the uploads directory exists
+    if (!is_dir('../uploads')) {
+        mkdir('../uploads', 0777, true);
     }
 
     // Sanitize and validate input data
@@ -61,9 +65,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $cv = handleFileUpload('cv');
 
     // Insert basic information into the tutor table
-    $stmt = $conn->prepare("INSERT INTO tutor (email, password, name_en, name_bn, father_name_en, mother_name_en, mobile_number, dob, birthplace, nationality, nid_number, nid_copy, passport_number, passport_expiry_date, passport_copy, gender, marital_status, mailing_address, permanent_village, permanent_post_office, permanent_police_station, permanent_upazilla, permanent_district, present_village, present_post_office, present_police_station, present_upazilla, present_district, photo, signature, cv) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $sql = "INSERT INTO tutors (email, password, name_en, name_bn, father_name_en, mother_name_en, mobile_number, dob, birthplace, nationality, nid_number, nid_copy, passport_number, passport_expiry_date, passport_copy, gender, marital_status, mailing_address, permanent_village, permanent_post_office, permanent_police_station, permanent_upazilla, permanent_district, present_village, present_post_office, present_police_station, present_upazilla, present_district, photo, signature, cv) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    $stmt = $conn->prepare($sql);
+    if ($stmt === false) {
+        die("Prepare failed: " . $conn->error);
+    }
+
     $stmt->bind_param("sssssssssssssssssssssssssssssss", $email, $password, $name_en, $name_bn, $father_name_en, $mother_name_en, $mobile_number, $dob, $birthplace, $nationality, $nid_number, $nid_copy, $passport_number, $passport_expiry_date, $passport_copy, $gender, $marital_status, $mailing_address, $permanent_village, $permanent_post_office, $permanent_police_station, $permanent_upazilla, $permanent_district, $present_village, $present_post_office, $present_police_station, $present_upazilla, $present_district, $photo, $signature, $cv);
-    $stmt->execute();
+
+    if ($stmt->execute() === false) {
+        die("Execute failed: " . $stmt->error);
+    }
 
     // Get the last inserted tutor ID
     $tutor_id = $stmt->insert_id;
@@ -85,16 +98,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 'cgpa_out_of' => htmlspecialchars($_POST['cgpa_out_of'][$index]),
                 'total_marks' => htmlspecialchars($_POST['total_marks'][$index]),
                 'supervisor_name_address' => htmlspecialchars($_POST['supervisor_name_address'][$index]),
-                'attachment_certificate' => handleFileUpload('attachment_certificate', $index)
+                'attachment_certificate' => handleFileUploadArray('attachment_certificate', $index)
             ];
 
             // Insert educational qualifications into the database
             $stmt = $conn->prepare("INSERT INTO tutor_education (tutor_id, degree_type, exam_name, institute_name, board_name, subject_group, study_from, study_to, passing_year, result_cgpa, cgpa_out_of, total_marks, supervisor_name_address, attachment_certificate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            if ($stmt === false) {
+                die("Prepare failed: " . $conn->error);
+            }
             $stmt->bind_param("isssssssssssss", $tutor_id, $education[$index]['degree_type'], $education[$index]['exam_name'], $education[$index]['institute_name'], $education[$index]['board_name'], $education[$index]['subject_group'], $education[$index]['study_from'], $education[$index]['study_to'], $education[$index]['passing_year'], $education[$index]['result_cgpa'], $education[$index]['cgpa_out_of'], $education[$index]['total_marks'], $education[$index]['supervisor_name_address'], $education[$index]['attachment_certificate']);
-            $stmt->execute();
+            if ($stmt->execute() === false) {
+                die("Execute failed: " . $stmt->error);
+            }
         }
     }
 
+    
     // Process experiences
     $experiences = [];
     if (isset($_POST['organization_type'])) {
@@ -109,16 +128,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 'basic_salary' => htmlspecialchars($_POST['basic_salary'][$index]),
                 'pay_scale' => htmlspecialchars($_POST['pay_scale'][$index]),
                 'details' => htmlspecialchars($_POST['details'][$index]),
-                'attachment' => handleFileUpload('attachment', $index)
+                'experience_attachment' => handleFileUploadArray('experience_attachment', $index)
             ];
 
             // Insert experiences into the database
-            $stmt = $conn->prepare("INSERT INTO tutor_experience (tutor_id, organization_type, organization_name, experience_type, designation, start_date, end_date, basic_salary, pay_scale, details, attachment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("issssssssss", $tutor_id, $experiences[$index]['organization_type'], $experiences[$index]['organization_name'], $experiences[$index]['experience_type'], $experiences[$index]['designation'], $experiences[$index]['start_date'], $experiences[$index]['end_date'], $experiences[$index]['basic_salary'], $experiences[$index]['pay_scale'], $experiences[$index]['details'], $experiences[$index]['attachment']);
+            $stmt = $conn->prepare("INSERT INTO tutor_experience (tutor_id, organization_type, organization_name, experience_type, designation, start_date, end_date, basic_salary, pay_scale, details, experience_attachment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("issssssssss", $tutor_id, $experiences[$index]['organization_type'], $experiences[$index]['organization_name'], $experiences[$index]['experience_type'], $experiences[$index]['designation'], $experiences[$index]['start_date'], $experiences[$index]['end_date'], $experiences[$index]['basic_salary'], $experiences[$index]['pay_scale'], $experiences[$index]['details'], $experiences[$index]['experience_attachment']);
             $stmt->execute();
         }
     }
-
+    
     // Process language proficiency
     $languages = [];
     if (isset($_POST['language'])) {
@@ -137,99 +156,220 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Process research projects
     $research_projects = [];
-    if (isset($_POST['title'])) {
-        foreach ($_POST['title'] as $index => $title) {
+    if (isset($_POST['research_title'])) {
+        foreach ($_POST['research_title'] as $index => $research_title) {
             $research_projects[] = [
-                'title' => htmlspecialchars($title),
+                'research_title' => htmlspecialchars($research_title),
                 'funding_agency' => htmlspecialchars($_POST['funding_agency'][$index]),
-                'period' => htmlspecialchars($_POST['period'][$index]),
+                'research_period' => htmlspecialchars($_POST['research_period'][$index]),
                 'funding_amount' => htmlspecialchars($_POST['funding_amount'][$index]),
-                'status' => htmlspecialchars($_POST['status'][$index])
+                'research_status' => htmlspecialchars($_POST['research_status'][$index])
             ];
 
             // Insert research projects into the database
-            $stmt = $conn->prepare("INSERT INTO tutor_research_project (tutor_id, title, funding_agency, period, funding_amount, status) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("isssss", $tutor_id, $research_projects[$index]['title'], $research_projects[$index]['funding_agency'], $research_projects[$index]['period'], $research_projects[$index]['funding_amount'], $research_projects[$index]['status']);
-            $stmt->execute();
+            $stmt = $conn->prepare("INSERT INTO tutor_research_project (tutor_id, research_title, funding_agency, research_period, funding_amount, research_status) VALUES (?, ?, ?, ?, ?, ?)");
+            if ($stmt === false) {
+                die("Prepare failed: " . $conn->error);
+            }
+            $stmt->bind_param("isssss", $tutor_id, $research_projects[$index]['research_title'], $research_projects[$index]['funding_agency'], $research_projects[$index]['research_period'], $research_projects[$index]['funding_amount'], $research_projects[$index]['research_status']);
+            if ($stmt->execute() === false) {
+                die("Execute failed: " . $stmt->error);
+            }
         }
     }
+
 
     // Process publications
-    $publications = [];
-    if (isset($_POST['publication_source'])) {
-        foreach ($_POST['publication_source'] as $index => $publication_source) {
-            $publications[] = [
-                'publication_source' => htmlspecialchars($publication_source),
-                'title' => htmlspecialchars($_POST['title'][$index]),
-                'authors' => htmlspecialchars($_POST['authors'][$index]),
-                'journal_name' => htmlspecialchars($_POST['journal_name'][$index]),
-                'year' => htmlspecialchars($_POST['year'][$index]),
-                'month' => htmlspecialchars($_POST['month'][$index]),
-                'pages' => htmlspecialchars($_POST['pages'][$index]),
-                'publisher' => htmlspecialchars($_POST['publisher'][$index]),
-                'volume' => htmlspecialchars($_POST['volume'][$index]),
-                'author_type' => htmlspecialchars($_POST['author_type'][$index]),
-                'issue' => htmlspecialchars($_POST['issue'][$index]),
-                'keywords' => htmlspecialchars($_POST['keywords'][$index]),
-                'impact_factor' => htmlspecialchars($_POST['impact_factor'][$index]),
-                'issn' => htmlspecialchars($_POST['issn'][$index]),
-                'doi' => htmlspecialchars($_POST['doi'][$index]),
-                'indexed_by' => htmlspecialchars($_POST['indexed_by'][$index]),
-                'web_url' => htmlspecialchars($_POST['web_url'][$index])
-            ];
+    
+    // Process publications
+if (isset($_POST['publication_source'])) {
+    foreach ($_POST['publication_source'] as $index => $publication_source) {
+        $publication_source = htmlspecialchars($publication_source);
 
-            // Insert publications into the database
-            $stmt = $conn->prepare("INSERT INTO tutor_publication (tutor_id, publication_source, title, authors, journal_name, year, month, pages, publisher, volume, author_type, issue, keywords, impact_factor, issn, doi, indexed_by, web_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("isssssssssssssssss", $tutor_id, $publications[$index]['publication_source'], $publications[$index]['title'], $publications[$index]['authors'], $publications[$index]['journal_name'], $publications[$index]['year'], $publications[$index]['month'], $publications[$index]['pages'], $publications[$index]['publisher'], $publications[$index]['volume'], $publications[$index]['author_type'], $publications[$index]['issue'], $publications[$index]['keywords'], $publications[$index]['impact_factor'], $publications[$index]['issn'], $publications[$index]['doi'], $publications[$index]['indexed_by'], $publications[$index]['web_url']);
-            $stmt->execute();
+        // Initialize all fields to null
+        $journal_title = null;
+        $journal_authors = null;
+        $journal_year = null;
+        $journal_month = null;
+        $journal_keywords = null;
+        $journal_impact_factor = null;
+        $journal_indexed_by = null;
+        $journal_web_url = null;
+        $journal_name = null;
+        $journal_pages = null;
+        $journal_publisher = null;
+        $journal_volume = null;
+        $journal_author_type = null;
+        $journal_issue = null;
+        $journal_issn = null;
+        $journal_doi = null;
+
+        $book_title = null;
+        $book_authors = null;
+        $book_year = null;
+        $book_month = null;
+        $book_keywords = null;
+        $book_impact_factor = null;
+        $book_indexed_by = null;
+        $book_web_url = null;
+        $book_publisher = null;
+        $book_city = null;
+        $book_isbn = null;
+
+        // Journal-specific fields
+        if ($publication_source === 'Journal') {
+            $journal_title = isset($_POST['journal_title'][$index]) ? htmlspecialchars($_POST['journal_title'][$index]) : null;
+            $journal_authors = isset($_POST['journal_authors'][$index]) ? htmlspecialchars($_POST['journal_authors'][$index]) : null;
+            $journal_year = isset($_POST['journal_year'][$index]) ? htmlspecialchars($_POST['journal_year'][$index]) : null;
+            $journal_month = isset($_POST['journal_month'][$index]) ? htmlspecialchars($_POST['journal_month'][$index]) : null;
+            $journal_keywords = isset($_POST['journal_keywords'][$index]) ? htmlspecialchars($_POST['journal_keywords'][$index]) : null;
+            $journal_impact_factor = isset($_POST['journal_impact_factor'][$index]) ? htmlspecialchars($_POST['journal_impact_factor'][$index]) : null;
+            $journal_indexed_by = isset($_POST['journal_indexed_by'][$index]) ? htmlspecialchars($_POST['journal_indexed_by'][$index]) : null;
+            $journal_web_url = isset($_POST['journal_web_url'][$index]) ? htmlspecialchars($_POST['journal_web_url'][$index]) : null;
+            $journal_name = isset($_POST['journal_name'][$index]) ? htmlspecialchars($_POST['journal_name'][$index]) : null;
+            $journal_pages = isset($_POST['journal_pages'][$index]) ? htmlspecialchars($_POST['journal_pages'][$index]) : null;
+            $journal_publisher = isset($_POST['journal_publisher'][$index]) ? htmlspecialchars($_POST['journal_publisher'][$index]) : null;
+            $journal_volume = isset($_POST['journal_volume'][$index]) ? htmlspecialchars($_POST['journal_volume'][$index]) : null;
+            $journal_author_type = isset($_POST['journal_author_type'][$index]) ? htmlspecialchars($_POST['journal_author_type'][$index]) : null;
+            $journal_issue = isset($_POST['journal_issue'][$index]) ? htmlspecialchars($_POST['journal_issue'][$index]) : null;
+            $journal_issn = isset($_POST['journal_issn'][$index]) ? htmlspecialchars($_POST['journal_issn'][$index]) : null;
+            $journal_doi = isset($_POST['journal_doi'][$index]) ? htmlspecialchars($_POST['journal_doi'][$index]) : null;
+        }
+        // Book-specific fields
+        elseif ($publication_source === 'Book') {
+            $book_title = isset($_POST['book_title'][$index]) ? htmlspecialchars($_POST['book_title'][$index]) : null;
+            $book_authors = isset($_POST['book_authors'][$index]) ? htmlspecialchars($_POST['book_authors'][$index]) : null;
+            $book_year = isset($_POST['book_year'][$index]) ? htmlspecialchars($_POST['book_year'][$index]) : null;
+            $book_month = isset($_POST['book_month'][$index]) ? htmlspecialchars($_POST['book_month'][$index]) : null;
+            $book_keywords = isset($_POST['book_keywords'][$index]) ? htmlspecialchars($_POST['book_keywords'][$index]) : null;
+            $book_impact_factor = isset($_POST['book_impact_factor'][$index]) ? htmlspecialchars($_POST['book_impact_factor'][$index]) : null;
+            $book_indexed_by = isset($_POST['book_indexed_by'][$index]) ? htmlspecialchars($_POST['book_indexed_by'][$index]) : null;
+            $book_web_url = isset($_POST['book_web_url'][$index]) ? htmlspecialchars($_POST['book_web_url'][$index]) : null;
+            $book_publisher = isset($_POST['book_publisher'][$index]) ? htmlspecialchars($_POST['book_publisher'][$index]) : null;
+            $book_city = isset($_POST['book_city'][$index]) ? htmlspecialchars($_POST['book_city'][$index]) : null;
+            $book_isbn = isset($_POST['book_isbn'][$index]) ? htmlspecialchars($_POST['book_isbn'][$index]) : null;
+        }
+
+        // Insert publications into the database
+        $stmt = $conn->prepare("INSERT INTO tutor_publication (
+            tutor_id, publication_source, journal_title, journal_authors, journal_year, journal_month, journal_keywords, journal_impact_factor, journal_indexed_by, journal_web_url, journal_name, journal_pages, journal_publisher, journal_volume, journal_author_type, journal_issue, journal_issn, journal_doi, book_title, book_authors, book_year, book_month, book_keywords, book_impact_factor, book_indexed_by, book_web_url, book_publisher, book_city, book_isbn
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        if ($stmt === false) {
+            error_log("Prepare failed: " . htmlspecialchars($conn->error), 3, "C:/xampp/htdocs/dev/SE-Projects/logs/error.log");
+            die("Prepare failed: " . htmlspecialchars($conn->error));
+        }
+        $stmt->bind_param(
+            "issssssssssssssssssssssssssss",
+            $tutor_id,
+            $publication_source,
+            $journal_title,
+            $journal_authors,
+            $journal_year,
+            $journal_month,
+            $journal_keywords,
+            $journal_impact_factor,
+            $journal_indexed_by,
+            $journal_web_url,
+            $journal_name,
+            $journal_pages,
+            $journal_publisher,
+            $journal_volume,
+            $journal_author_type,
+            $journal_issue,
+            $journal_issn,
+            $journal_doi,
+            $book_title,
+            $book_authors,
+            $book_year,
+            $book_month,
+            $book_keywords,
+            $book_impact_factor,
+            $book_indexed_by,
+            $book_web_url,
+            $book_publisher,
+            $book_city,
+            $book_isbn
+        );
+        if ($stmt->execute() === false) {
+            error_log("Execute failed: " . htmlspecialchars($stmt->error), 3, "C:/xampp/htdocs/dev/SE-Projects/logs/error.log");
+            die('Error executing statement: ' . htmlspecialchars($stmt->error));
         }
     }
+}
 
-    // Process references
-    $references = [];
-    if (isset($_POST['reference_name'])) {
-        foreach ($_POST['reference_name'] as $index => $reference_name) {
-            $references[] = [
-                'reference_name' => htmlspecialchars($reference_name),
-                'reference_designation' => htmlspecialchars($_POST['reference_designation'][$index]),
-                'reference_organization' => htmlspecialchars($_POST['reference_organization'][$index]),
-                'reference_mobile' => htmlspecialchars($_POST['reference_mobile'][$index]),
-                'reference_email' => htmlspecialchars($_POST['reference_email'][$index])
-            ];
+ // Process references
+ $references = [];
+ if (isset($_POST['reference_name'])) {
+     foreach ($_POST['reference_name'] as $index => $reference_name) {
+         $references[] = [
+             'reference_name' => htmlspecialchars($reference_name),
+             'reference_designation' => htmlspecialchars($_POST['reference_designation'][$index]),
+             'reference_organization' => htmlspecialchars($_POST['reference_organization'][$index]),
+             'reference_mobile' => htmlspecialchars($_POST['reference_mobile'][$index]),
+             'reference_email' => htmlspecialchars($_POST['reference_email'][$index])
+         ];
 
-            // Insert references into the database
-            $stmt = $conn->prepare("INSERT INTO tutor_reference (tutor_id, reference_name, reference_designation, reference_organization, reference_mobile, reference_email) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("isssss", $tutor_id, $references[$index]['reference_name'], $references[$index]['reference_designation'], $references[$index]['reference_organization'], $references[$index]['reference_mobile'], $references[$index]['reference_email']);
-            $stmt->execute();
-        }
-    }
-
-    // Close the statement and connection
-    $stmt->close();
-    $conn->close();
+         // Insert references into the database
+         $stmt = $conn->prepare("INSERT INTO tutor_reference (tutor_id, reference_name, reference_designation, reference_organization, reference_mobile, reference_email) VALUES (?, ?, ?, ?, ?, ?)");
+         $stmt->bind_param("isssss", $tutor_id, $references[$index]['reference_name'], $references[$index]['reference_designation'], $references[$index]['reference_organization'], $references[$index]['reference_mobile'], $references[$index]['reference_email']);
+         $stmt->execute();
+     }
+ }
+error_log("Prepare failed: " . htmlspecialchars($conn->error), 3, "C:/xampp/htdocs/dev/SE-Projects/logs/error.log");
+    
+   // $conn->close();
 
     // Redirect or display a success message
     echo "Form submitted successfully!";
 }
 
+//Single File Upload
 function handleFileUpload($fieldName, $index = null) {
     if ($index !== null) {
         $fieldName = $fieldName . '[' . $index . ']';
     }
     if (isset($_FILES[$fieldName]) && $_FILES[$fieldName]['error'] == UPLOAD_ERR_OK) {
-        $uploadDir = 'uploads/';
+        $uploadDir = '../uploads/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
         $uploadFile = $uploadDir . basename($_FILES[$fieldName]['name']);
         if (move_uploaded_file($_FILES[$fieldName]['tmp_name'], $uploadFile)) {
             return $uploadFile;
+        } else {
+            error_log("Failed to move uploaded file for $fieldName");
         }
+    } else {
+        error_log("File upload error for $fieldName: " . $_FILES[$fieldName]['error']);
     }
     return null;
 }
+
+//Multiple File Upload
+function handleFileUploadArray($fieldName, $index) {
+    if (isset($_FILES[$fieldName]) && isset($_FILES[$fieldName]['name'][$index]) && $_FILES[$fieldName]['error'][$index] == UPLOAD_ERR_OK) {
+        $uploadDir = '../uploads/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+        $uploadFile = $uploadDir . basename($_FILES[$fieldName]['name'][$index]);
+        if (move_uploaded_file($_FILES[$fieldName]['tmp_name'][$index], $uploadFile)) {
+            return $uploadFile;
+        } else {
+            error_log("Failed to move uploaded file for $fieldName[$index]");
+        }
+    } else {
+        error_log("File upload error for $fieldName[$index]: " . $_FILES[$fieldName]['error'][$index]);
+    }
+    return null;
+}
+
+
 ?>
 
 <main>
     <h2>Register</h2>
-    <form method="POST" action="register.php" enctype="multipart/form-data">
+    <form method="POST" action="" enctype="multipart/form-data">
         <label for="email">Email:<span>*</span></label>
         <input type="email" id="email" name="email" required>
         
@@ -415,7 +555,7 @@ function handleFileUpload($fieldName, $index = null) {
             </div>
         </div>
         <button type="button" id="add-education" class="btn btn-add-education">Add More Education</button>
-        
+
         <h3>Experiences</h3>
 
         <div id="experience-section">
@@ -460,14 +600,12 @@ function handleFileUpload($fieldName, $index = null) {
                 <label for="details">Details:<span>*</span></label>
                 <textarea id="details" name="details[]" rows="3" required></textarea>
         
-                <label for="attachment">Attachment (Experience Certificate in pdf):<span>*</span></label>
-                <input type="file" id="attachment" name="attachment[]" accept="application/pdf" required>
+                <label for="experience_attachment">Attachment (Experience Certificate in pdf):<span>*</span></label>
+                <input type="file" id="experience_attachment" name="experience_attachment[]" accept="application/pdf" required>
             </div>
         </div>
-
-
         <button type="button" id="add-experience" class="btn btn-add-experience">Add More Experience</button>
-        
+         
         <h3>Language Proficiency</h3>
 
         <div id="language-section">
@@ -487,25 +625,25 @@ function handleFileUpload($fieldName, $index = null) {
             </div>
         </div>
         <button type="button" id="add-language" class="btn btn-add-language">Add Language Proficiency</button>
-
+        
         <h3>Research Project Info</h3>
         
         <div id="research-project-section">
             <div class="research-project-entry show">
-                <label for="title">Title:</label>
-                <input type="text" class="title" name="title[]">
+                <label for="research_title">Title:</label>
+                <input type="text" class="research_title" name="research_title[]">
         
                 <label for="funding_agency">Awarding/Funding Agency:</label>
                 <input type="text" id="funding_agency" name="funding_agency[]">
         
-                <label for="period">Period:</label>
-                <input type="text" id="period" name="period[]">
+                <label for="research_period">Period:</label>
+                <input type="text" id="research_period" name="research_period[]">
         
                 <label for="funding_amount">Funding Amount (in Lakh BDT):</label>
                 <input type="number" id="funding_amount" name="funding_amount[]">
         
-                <label for="status">Status:</label>
-                <select id="status" name="status[]">
+                <label for="research_status">Status:</label>
+                <select id="research_status" name="research_status[]">
                     <option value="">--Select--</option>
                     <option value="Ongoing">Ongoing</option>
                     <option value="Completed">Completed</option>
@@ -515,138 +653,10 @@ function handleFileUpload($fieldName, $index = null) {
         <button type="button" id="add-research-project" class="btn btn-add-research-project">Add More Research Project</button>
 
         <h3>Publications</h3>
-
         <div id="publication-section">
-            <div class="publication-entry show">
-                <label for="publication_source">Publication Source:</label>
-                <select id="publication_source" name="publication_source[]" required onchange="togglePublicationFields(this)">
-                    <option value="">--Select--</option>
-                    <option value="Journal">Journal</option>
-                    <option value="Book">Book</option>
-                </select>
-        
-                <div class="journal-fields" style="display: none;">
-                    <label for="title">Title:<span>*</span></label>
-                    <input type="text" id="title" name="title[]" required>
-        
-                    <label for="authors">Author(s):</label>
-                    <input type="text" id="authors" name="authors[]">
-                    <small>Use comma(,) to separate multiple authors(s)</small>
-        
-                    <label for="journal_name">Journal Name:</label>
-                    <input type="text" id="journal_name" name="journal_name[]">
-        
-                    <label for="year">Year:<span>*</span></label>
-                    <select id="year" name="year[]" required>
-                        <option value="">--Select Year--</option>
-                        <option value="2024">2024</option>
-                        <option value="2023">2023</option>
-                        <option value="2022">2022</option>
-                        <option value="2021">2021</option>
-                    </select>
-        
-                    <label for="month">Month:<span>*</span></label>
-                    <select id="month" name="month[]" required>
-                        <option value="">--Select--</option>
-                        <option value="January">January</option>
-                        <option value="February">February</option>
-                        <option value="March">March</option>
-                        <!-- Add other months as needed -->
-                    </select>
-        
-                    <label for="pages">Pages:</label>
-                    <input type="text" id="pages" name="pages[]">
-        
-                    <label for="publisher">Publisher:</label>
-                    <input type="text" id="publisher" name="publisher[]">
-        
-                    <label for="volume">Volume:</label>
-                    <input type="text" id="volume" name="volume[]">
-        
-                    <label for="author_type">Type of Author:</label>
-                    <select id="author_type" name="author_type[]">
-                        <option value="">--Select--</option>
-                        <option value="Principle">Principle</option>
-                        <option value="Corresponding">Corresponding</option>
-                    </select>
-        
-                    <label for="issue">Issue:</label>
-                    <input type="text" id="issue" name="issue[]">
-        
-                    <label for="keywords">Keyword(s):</label>
-                    <input type="text" id="keywords" name="keywords[]">
-                    <small>Use comma(,) to separate multiple keyword(s)</small>
-        
-                    <label for="impact_factor">Impact Factor/Cite Score (If any):</label>
-                    <input type="text" id="impact_factor" name="impact_factor[]">
-        
-                    <label for="issn">ISSN:</label>
-                    <input type="text" id="issn" name="issn[]">
-        
-                    <label for="doi">DOI:</label>
-                    <input type="text" id="doi" name="doi[]">
-        
-                    <label for="indexed_by">Indexed By(s):</label>
-                    <input type="text" id="indexed_by" name="indexed_by[]">
-                    <small>Use comma(,) to Indexed multiple separate By(s)</small>
-        
-                    <label for="web_url">Web Url:</label>
-                    <input type="url" id="web_url" name="web_url[]">
-                </div>
-        
-                <div class="book-fields" style="display: none;">
-                    <label for="book_title">Book Title:<span>*</span></label>
-                    <input type="text" id="book_title" name="book_title[]" required>
-        
-                    <label for="book_authors">Author(s):</label>
-                    <input type="text" id="book_authors" name="book_authors[]">
-                    <small>Use comma(,) to separate multiple authors(s)</small>
-        
-                    <label for="book_year">Year:<span>*</span></label>
-                    <select id="book_year" name="book_year[]" required>
-                        <option value="">--Select Year--</option>
-                        <option value="2024">2024</option>
-                        <option value="2023">2023</option>
-                        <option value="2022">2022</option>
-                        <option value="2021">2021</option>
-                    </select>
-        
-                    <label for="book_month">Month:<span>*</span></label>
-                    <select id="book_month" name="book_month[]" required>
-                        <option value="">--Select--</option>
-                        <option value="January">January</option>
-                        <option value="February">February</option>
-                        <option value="March">March</option>
-                        <!-- Add other months as needed -->
-                    </select>
-        
-                    <label for="city">City:</label>
-                    <input type="text" id="city" name="city[]">
-        
-                    <label for="book_publisher">Book Publisher:</label>
-                    <input type="text" id="book_publisher" name="book_publisher[]">
-        
-                    <label for="book_keywords">Keyword(s):</label>
-                    <input type="text" id="book_keywords" name="book_keywords[]">
-                    <small>Use comma(,) to separate multiple keyword(s)</small>
-        
-                    <label for="book_impact_factor">Impact Factor/Cite Score (If any):</label>
-                    <input type="text" id="book_impact_factor" name="book_impact_factor[]">
-        
-                    <label for="indexed_by">Indexed By(s):</label>
-                    <input type="text" id="indexed_by" name="indexed_by[]">
-                    <small>Use comma(,) to Indexed multiple separate By(s)</small>
-        
-                    <label for="isbn">ISBN No:</label>
-                    <input type="text" id="isbn" name="isbn[]">
-        
-                    <label for="book_web_url">Web Url:</label>
-                    <input type="url" id="book_web_url" name="book_web_url[]">
-                </div>
-            </div>
-        </div>  
-        <button type="button" id="add-publication" class="btn btn-add-publication">Add More Publication</button>
-        
+        </div>
+        <button type="button" id="add-publication" class="btn btn-add-publication">Add  Publication</button>
+          
         <h3>Reference Info</h3>
         <div id="reference-section">
             <div class="reference-entry show">
@@ -809,8 +819,8 @@ document.getElementById('add-experience').addEventListener('click', function() {
             <label for="details">Details:<span>*</span></label>
             <textarea id="details" name="details[]" rows="3" required></textarea>
 
-            <label for="attachment">Attachment (Experience Certificate in pdf):<span>*</span></label>
-            <input type="file" id="attachment" name="attachment[]" accept="application/pdf" required>
+            <label for="experience_attachment">Attachment (Experience Certificate in pdf):<span>*</span></label>
+            <input type="file" id="experience_attachment" name="experience_attachment[]" accept="application/pdf" required>
 
             <button type="button" class="remove-experience">
                 <i class="fas fa-trash-alt"></i> Remove
@@ -851,6 +861,7 @@ document.getElementById('add-language').addEventListener('click', function() {
     setTimeout(() => newEntry.classList.add('show'), 10); // Add show class with a slight delay
     addRemoveButtonListener();
 });
+
 document.getElementById('add-research-project').addEventListener('click', function() {
     var researchProjectSection = document.getElementById('research-project-section');
     var newEntry = document.createElement('div');
@@ -858,20 +869,20 @@ document.getElementById('add-research-project').addEventListener('click', functi
     newEntry.innerHTML = `
         <div>
             <h4>Add Research Project Info</h4>
-            <label for="title">Title:</label>
-            <input type="text" id="title" name="title[]">
-
+            <label for="research_title">Title:</label>
+            <input type="text" class="research_title" name="research_title[]">
+        
             <label for="funding_agency">Awarding/Funding Agency:</label>
             <input type="text" id="funding_agency" name="funding_agency[]">
-
-            <label for="period">Period:</label>
-            <input type="text" id="period" name="period[]">
-
+        
+            <label for="research_period">Period:</label>
+            <input type="text" id="research_period" name="research_period[]">
+        
             <label for="funding_amount">Funding Amount (in Lakh BDT):</label>
             <input type="number" id="funding_amount" name="funding_amount[]">
-
-            <label for="status">Status:</label>
-            <select id="status" name="status[]">
+        
+            <label for="research_status">Status:</label>
+            <select id="research_status" name="research_status[]">
                 <option value="">--Select--</option>
                 <option value="Ongoing">Ongoing</option>
                 <option value="Completed">Completed</option>
@@ -887,243 +898,228 @@ document.getElementById('add-research-project').addEventListener('click', functi
     addRemoveButtonListener();
 });
 
-document.getElementById('add-publication').addEventListener('click', function() {
-    var publicationSection = document.getElementById('publication-section');
-    var newEntry = document.createElement('div');
-    newEntry.classList.add('publication-entry');
-    newEntry.innerHTML = `
-        <div>
-            <h4>Add Publication Info</h4>
-            <label for="publication_source">Publication Source:<span>*</span></label>
-            <select id="publication_source" name="publication_source[]" required onchange="togglePublicationFields(this)">
-                <option value="">--Select--</option>
-                <option value="Journal">Journal</option>
-                <option value="Book">Book</option>
-            </select>
+//publication section add more button event listener and function to add new publication entry fields dynamically 
 
-            <div class="journal-fields" style="display: none;">
-                <label for="title">Title:<span>*</span></label>
-                <input type="text" id="title" name="title[]" required>
-
-                <label for="authors">Author(s): 
-                    <small>Use comma(,) to separate multiple authors(s)</small>
-                </label>
-                <input type="text" id="authors" name="authors[]">
-                
-
-                <label for="journal_name">Journal Name:</label>
-                <input type="text" id="journal_name" name="journal_name[]">
-
-                <label for="year">Year:<span>*</span></label>
-                <select id="year" name="year[]" required>
-                    <option value="">--Select Year--</option>
-                    <option value="2024">2024</option>
-                    <option value="2023">2023</option>
-                    <option value="2022">2022</option>
-                    <option value="2021">2021</option>
-                    <option value="2020">2020</option>
-                    <option value="2019">2019</option>
-                    <option value="2018">2018</option>
-                    <option value="2017">2017</option>
-                    <option value="2016">2016</option>
-                    <option value="2015">2015</option>
-                    <option value="2014">2014</option>
-                    <option value="2013">2013</option>
-                    <option value="2012">2012</option>
-                    <option value="2011">2011</option>
-                    <option value="2010">2010</option>
-                    <option value="2009">2009</option>
-                    <option value="2008">2008</option>
-                    <option value="2007">2007</option>
-                    <option value="2006">2006</option>
-                    <option value="2005">2005</option>
-                    <option value="2004">2004</option>
-                    <option value="2003">2003</option>
-                    <option value="2002">2002</option>
-                    <option value="2001">2001</option>
-                    <option value="2000">2000</option>
-                    <option value="1999">1999</option>
-                    <option value="1998">1998</option>
-                    <option value="1997">1997</option>
-                    <option value="1996">1996</option>
-                    <option value="1995">1995</option>
-                    <option value="1994">1994</option>
-                    <option value="1993">1993</option>
-                </select>
-
-                <label for="month">Month:<span>*</span></label>
-                <select id="month" name="month[]" required>
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('add-publication').addEventListener('click', function() {
+        var publicationSection = document.getElementById('publication-section');
+        var newEntry = document.createElement('div');
+        newEntry.classList.add('publication-entry');
+        newEntry.innerHTML = `
+            <div>
+                <h4>Add Publication Info</h4>
+                <label for="publication_source">Publication Source:<span>*</span></label>
+                <select name="publication_source[]" required onchange="togglePublicationFields(this)">
                     <option value="">--Select--</option>
-                    <option value="January">January</option>
-                    <option value="February">February</option>
-                    <option value="March">March</option>
-                    <option value="April">April</option>
-                    <option value="May">May</option>
-                    <option value="June">June</option>
-                    <option value="July">July</option>
-                    <option value="August">August</option>
-                    <option value="September">September</option>
-                    <option value="October">October</option>
-                    <option value="November">November</option>
-                    <option value="December">December</option>
-                    <!-- Add other months as needed -->
+                    <option value="Journal">Journal</option>
+                    <option value="Book">Book</option>
                 </select>
 
-                <label for="pages">Pages:</label>
-                <input type="text" id="pages" name="pages[]">
+                <div class="journal-fields" style="display: none;">
+                    <label for="journal_title">Title:<span>*</span></label>
+                    <input type="text" name="journal_title[]">
 
-                <label for="publisher">Publisher:</label>
-                <input type="text" id="publisher" name="publisher[]">
+                    <label for="authors">Author(s): 
+                        <small>Use comma(,) to separate multiple authors(s)</small>
+                    </label>
+                    <input type="text" name="authors[]">
 
-                <label for="volume">Volume:</label>
-                <input type="text" id="volume" name="volume[]">
+                    <label for="journal_name">Journal Name:</label>
+                    <input type="text" name="journal_name[]">
 
-                <label for="author_type">Type of Author:</label>
-                <select id="author_type" name="author_type[]">
-                    <option value="">--Select--</option>
-                    <option value="Principle">Principle</option>
-                    <option value="Corresponding">Corresponding</option>
-                </select>
+                    <label for="year">Year:<span>*</span></label>
+                    <select name="year[]">
+                        <option value="">--Select Year--</option>
+                        ${generateYearOptions()}
+                    </select>
 
-                <label for="issue">Issue:</label>
-                <input type="text" id="issue" name="issue[]">
+                    <label for="month">Month:<span>*</span></label>
+                    <select name="month[]">
+                        <option value="">--Select--</option>
+                        ${generateMonthOptions()}
+                    </select>
 
-                <label for="keywords">Keyword(s):<small>Use comma(,) to separate multiple keyword(s)</small></label>
-                <input type="text" id="keywords" name="keywords[]">
-                
+                    <label for="pages">Pages:</label>
+                    <input type="text" name="pages[]">
 
-                <label for="impact_factor">Impact Factor/Cite Score (If any):</label>
-                <input type="text" id="impact_factor" name="impact_factor[]">
+                    <label for="publisher">Publisher:</label>
+                    <input type="text" name="publisher[]">
 
-                <label for="issn">ISSN:</label>
-                <input type="text" id="issn" name="issn[]">
+                    <label for="volume">Volume:</label>
+                    <input type="text" name="volume[]">
 
-                <label for="doi">DOI:</label>
-                <input type="text" id="doi" name="doi[]">
+                    <label for="author_type">Type of Author:</label>
+                    <select name="author_type[]">
+                        <option value="">--Select--</option>
+                        <option value="Principle">Principle</option>
+                        <option value="Corresponding">Corresponding</option>
+                    </select>
 
-                <label for="indexed_by">Indexed By(s):<small>Use comma(,) to Indexed multiple separate By(s)</small></label>
-                <input type="text" id="indexed_by" name="indexed_by[]">
-                
+                    <label for="issue">Issue:</label>
+                    <input type="text" name="issue[]">
 
-                <label for="web_url">Web Url:</label>
-                <input type="url" id="web_url" name="web_url[]">
+                    <label for="keywords">Keyword(s):<small>Use comma(,) to separate multiple keyword(s)</small></label>
+                    <input type="text" name="keywords[]">
+
+                    <label for="impact_factor">Impact Factor/Cite Score (If any):</label>
+                    <input type="text" name="impact_factor[]">
+
+                    <label for="issn">ISSN:</label>
+                    <input type="text" name="issn[]">
+
+                    <label for="doi">DOI:</label>
+                    <input type="text" name="doi[]">
+
+                    <label for="indexed_by">Indexed By(s):<small>Use comma(,) to Indexed multiple separate By(s)</small></label>
+                    <input type="text" name="indexed_by[]">
+
+                    <label for="web_url">Web Url:</label>
+                    <input type="url" name="web_url[]">
+                </div>
+
+                <div class="book-fields" style="display: none;">
+                    <label for="book_title">Book Title:<span>*</span></label>
+                    <input type="text" name="book_title[]">
+
+                    <label for="book_authors">Author(s):<small>Use comma(,) to separate multiple authors(s)</small></label>
+                    <input type="text" name="book_authors[]">
+
+                    <label for="book_year">Year:<span>*</span></label>
+                    <select name="book_year[]">
+                        <option value="">--Select Year--</option>
+                        ${generateYearOptions()}
+                    </select>
+
+                    <label for="book_month">Month:<span>*</span></label>
+                    <select name="book_month[]">
+                        <option value="">--Select--</option>
+                        ${generateMonthOptions()}
+                    </select>
+
+                    <label for="city">City:</label>
+                    <input type="text" name="city[]">
+
+                    <label for="book_publisher">Book Publisher:</label>
+                    <input type="text" name="book_publisher[]">
+
+                    <label for="book_keywords">Keyword(s): <small>Use comma(,) to separate multiple keyword(s)</small></label>
+                    <input type="text" name="book_keywords[]">
+
+                    <label for="book_impact_factor">Impact Factor/Cite Score (If any):</label>
+                    <input type="text" name="book_impact_factor[]">
+
+                    <label for="indexed_by">Indexed By(s): <small>Use comma(,) to Indexed multiple separate By(s)</small></label>
+                    <input type="text" name="indexed_by[]">
+
+                    <label for="isbn">ISBN No:</label>
+                    <input type="text" name="isbn[]">
+
+                    <label for="book_web_url">Web Url:</label>
+                    <input type="url" name="book_web_url[]">
+                </div>
+
+                <button type="button" class="remove-publication">
+                    <i class="fas fa-trash-alt"></i> Remove
+                </button>
             </div>
+        `;
+        publicationSection.appendChild(newEntry);
+        setTimeout(() => newEntry.classList.add('show'), 10); // Add show class with a slight delay
+        addRemoveButtonListener();
+    });
 
-            <div class="book-fields" style="display: none;">
-                <label for="book_title">Book Title:<span>*</span></label>
-                <input type="text" id="book_title" name="book_title[]" required>
+    
 
-                <label for="book_authors">Author(s):<small>Use comma(,) to separate multiple authors(s)</small></label>
-                <input type="text" id="book_authors" name="book_authors[]">
-                
+    window.togglePublicationFields = function(selectElement) {
+        var journalFields = selectElement.closest('.publication-entry').querySelector('.journal-fields');
+        var bookFields = selectElement.closest('.publication-entry').querySelector('.book-fields');
 
-                <label for="book_year">Year:<span>*</span></label>
-                <select id="book_year" name="book_year[]" required>
-                    <option value="">--Select Year--</option>
-                    <option value="2024">2024</option>
-                    <option value="2023">2023</option>
-                    <option value="2022">2022</option>
-                    <option value="2021">2021</option>
-                    <option value="2020">2020</option>
-                    <option value="2019">2019</option>
-                    <option value="2018">2018</option>
-                    <option value="2017">2017</option>
-                    <option value="2016">2016</option>
-                    <option value="2015">2015</option>
-                    <option value="2014">2014</option>
-                    <option value="2013">2013</option>
-                    <option value="2012">2012</option>
-                    <option value="2011">2011</option>
-                    <option value="2010">2010</option>
-                    <option value="2009">2009</option>
-                    <option value="2008">2008</option>
-                    <option value="2007">2007</option>
-                    <option value="2006">2006</option>
-                    <option value="2005">2005</option>
-                    <option value="2004">2004</option>
-                    <option value="2003">2003</option>
-                    <option value="2002">2002</option>
-                    <option value="2001">2001</option>
-                    <option value="2000">2000</option>
-                    <option value="1999">1999</option>
-                    <option value="1998">1998</option>
-                    <option value="1997">1997</option>
-                    <option value="1996">1996</option>
-                    <option value="1995">1995</option>
-                    <option value="1994">1994</option>
-                    <option value="1993">1993</option>
-                    <option value="1992">1992</option>
-                    <option value="1991">1991</option>
-                    <option value="1990">1990</option>
-                </select>
+        if (selectElement.value === 'Journal') {
+            journalFields.style.display = 'block';
+            bookFields.style.display = 'none';
+            journalFields.querySelectorAll('input, select').forEach(function(input) {
+                input.setAttribute('required', 'required');
+            });
+            bookFields.querySelectorAll('input, select').forEach(function(input) {
+                input.removeAttribute('required');
+            });
+        } else if (selectElement.value === 'Book') {
+            journalFields.style.display = 'none';
+            bookFields.style.display = 'block';
+            bookFields.querySelectorAll('input, select').forEach(function(input) {
+                input.setAttribute('required', 'required');
+            });
+            journalFields.querySelectorAll('input, select').forEach(function(input) {
+                input.removeAttribute('required');
+            });
+        } else {
+            journalFields.style.display = 'none';
+            bookFields.style.display = 'none';
+            journalFields.querySelectorAll('input, select').forEach(function(input) {
+                input.removeAttribute('required');
+            });
+            bookFields.querySelectorAll('input, select').forEach(function(input) {
+                input.removeAttribute('required');
+            });
+        }
+    }
 
-                <label for="book_month">Month:<span>*</span></label>
-                <select id="book_month" name="book_month[]" required>
-                    <option value="">--Select--</option>
-                    <option value="January">January</option>
-                    <option value="February">February</option>
-                    <option value="March">March</option>
-                    <option value="April">April</option>
-                    <option value="May">May</option>
-                    <option value="June">June</option>
-                    <option value="July">July</option>
-                    <option value="August">August</option>
-                    <option value="September">September</option>
-                    <option value="October">October</option>
-                    <option value="November">November</option>
-                    <option value="December">December</option>
-                    <!-- Add other months as needed -->
-                </select>
+    
+    function addRemoveButtonListener() {
+        var removePublicationButtons = document.querySelectorAll('.remove-publication');
+        removePublicationButtons.forEach(function(button) {
+            button.removeEventListener('click', removePublicationEntry);
+            button.addEventListener('click', removePublicationEntry);
+        });
+    }
 
-                <label for="city">City:</label>
-                <input type="text" id="city" name="city[]">
+    function removePublicationEntry(event) {
+        var entry = event.target.closest('.publication-entry');
+        entry.classList.remove('show');
+        setTimeout(() => entry.remove(), 300); // Remove element after transition
+    }
 
-                <label for="book_publisher">Book Publisher:</label>
-                <input type="text" id="book_publisher" name="book_publisher[]">
+    function generateYearOptions() {
+        const currentYear = new Date().getFullYear();
+        let options = '';
+        for (let year = currentYear; year >= 1990; year--) {
+            options += `<option value="${year}">${year}</option>`;
+        }
+        return options;
+    }
 
-                <label for="book_keywords">Keyword(s): <small>Use comma(,) to separate multiple keyword(s)</small></label>
-                <input type="text" id="book_keywords" name="book_keywords[]">
-               
+    function generateMonthOptions() {
+        const months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        return months.map(month => `<option value="${month}">${month}</option>`).join('');
+    }
 
-                <label for="book_impact_factor">Impact Factor/Cite Score (If any):</label>
-                <input type="text" id="book_impact_factor" name="book_impact_factor[]">
+    // Handle form submission
+    document.querySelector('form').addEventListener('submit', function(event) {
+        var publicationEntries = document.querySelectorAll('.publication-entry');
+        publicationEntries.forEach(function(entry) {
+            var journalFields = entry.querySelector('.journal-fields');
+            var bookFields = entry.querySelector('.book-fields');
 
-                <label for="indexed_by">Indexed By(s): <small>Use comma(,) to Indexed multiple separate By(s)</small></label>
-                <input type="text" id="indexed_by" name="indexed_by[]">
-               
+            if (journalFields.style.display === 'none') {
+                journalFields.querySelectorAll('input, select').forEach(function(input) {
+                    input.removeAttribute('required');
+                });
+            }
 
-                <label for="isbn">ISBN No:</label>
-                <input type="text" id="isbn" name="isbn[]">
+            if (bookFields.style.display === 'none') {
+                bookFields.querySelectorAll('input, select').forEach(function(input) {
+                    input.removeAttribute('required');
+                });
+            }
+        });
+    });
 
-                <label for="book_web_url">Web Url:</label>
-                <input type="url" id="book_web_url" name="book_web_url[]">
-            </div>
-
-            <button type="button" class="remove-publication">
-                <i class="fas fa-trash-alt"></i> Remove
-            </button>
-        </div>
-    `;
-    publicationSection.appendChild(newEntry);
-    setTimeout(() => newEntry.classList.add('show'), 10); // Add show class with a slight delay
+    // Initialize remove button listeners for any existing entries
     addRemoveButtonListener();
 });
-
-function togglePublicationFields(selectElement) {
-    var journalFields = selectElement.closest('.publication-entry').querySelector('.journal-fields');
-    var bookFields = selectElement.closest('.publication-entry').querySelector('.book-fields');
-
-    if (selectElement.value === 'Journal') {
-        journalFields.style.display = 'block';
-        bookFields.style.display = 'none';
-    } else if (selectElement.value === 'Book') {
-        journalFields.style.display = 'none';
-        bookFields.style.display = 'block';
-    } else {
-        journalFields.style.display = 'none';
-        bookFields.style.display = 'none';
-    }
-}
 
 document.getElementById('add-reference').addEventListener('click', function() {
     var referenceSection = document.getElementById('reference-section');
@@ -1157,6 +1153,11 @@ document.getElementById('add-reference').addEventListener('click', function() {
     addRemoveButtonListener();
 });
 
+// Add remove button listener for education, experience, language, and research project entries
+// This function should be called whenever a new entry is added
+// This function should also be called when the page is loaded to initialize remove button listeners for existing entries
+// This function should be called after adding a new entry to initialize remove button listener for the new entry
+// This function should be called after removing an entry to reinitialize remove button listeners for the remaining entries
 function addRemoveButtonListener() {
     var removeEducationButtons = document.querySelectorAll('.remove-education');
     removeEducationButtons.forEach(function(button) {
@@ -1182,20 +1183,15 @@ function addRemoveButtonListener() {
         button.addEventListener('click', removeResearchProjectEntry);
     });
 
-    var removePublicationButtons = document.querySelectorAll('.remove-publication');
-    removePublicationButtons.forEach(function(button) {
-        button.removeEventListener('click', removePublicationEntry);
-        button.addEventListener('click', removePublicationEntry);
-    });
-
     var removeReferenceButtons = document.querySelectorAll('.remove-reference');
     removeReferenceButtons.forEach(function(button) {
     button.removeEventListener('click', removeReferenceEntry);
     button.addEventListener('click', removeReferenceEntry);
     });
-    
+
 }
 
+// Remove button event listeners and functions for education, experience, language, and research project entries
 function removeEducationEntry(event) {
     var entry = event.target.closest('.education-entry');
     entry.classList.remove('show');
@@ -1220,17 +1216,12 @@ function removeResearchProjectEntry(event) {
     setTimeout(() => entry.remove(), 300); // Remove element after transition
 }
 
-function removePublicationEntry(event) {
-    var entry = event.target.closest('.publication-entry');
-    entry.classList.remove('show');
-    setTimeout(() => entry.remove(), 300); // Remove element after transition
-}
-
 function removeReferenceEntry(event) {
     var entry = event.target.closest('.reference-entry');
     entry.classList.remove('show');
     setTimeout(() => entry.remove(), 300); // Remove element after transition
 }
+
 
 // Initialize remove button listeners for any existing entries
 addRemoveButtonListener();
