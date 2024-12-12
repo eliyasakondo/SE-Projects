@@ -3,8 +3,8 @@ session_start();
 include '../../includes/functions.php';
 include '../../includes/db.php';
 
-if (!isset($_SESSION['coordinator_id'])) {
-    header('Location: login.php');
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'coordinator') {
+    header('Location: ../login.php');
     exit();
 }
 
@@ -24,7 +24,7 @@ $tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
     <h2>Coordinator Dashboard</h2>
-    <a href="logout.php">Logout</a>
+    <a href="../logout.php">Logout</a>
     <h3>List of Tutor Registrations</h3>
     <table border="1">
         <thead>
