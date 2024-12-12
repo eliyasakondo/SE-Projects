@@ -409,8 +409,8 @@ function handleFileUploadArray($fieldName, $index) {
             <label for="nid_number">NID Number:<span>*</span></label>
             <input type="number" id="nid_number" name="nid_number" required>
         
-            <label for="nid_copy">NID Copy:</label>
-            <input type="file" id="nid_copy" name="nid_copy" accept="application/pdf">
+            <label for="nid_copy">NID Copy:<span>*</span></label>
+            <input type="file" id="nid_copy" name="nid_copy" accept="application/pdf, image/jpeg, image/png">
         
             <label for="passport_number">Passport Number:<span>*</span></label>
             <input type="text" id="passport_number" name="passport_number" required>
@@ -418,9 +418,9 @@ function handleFileUploadArray($fieldName, $index) {
             <label for="passport_expiry_date">Passport Expiry Date:<span>*</span></label>
             <input type="date" id="passport_expiry_date" name="passport_expiry_date" required>
         
-            <label for="passport_copy">Passport Copy:</label>
-            <input type="file" id="passport_copy" name="passport_copy" accept="application/pdf">
-        
+            <label for="passport_copy">Passport Copy: <span>*</span></span></label>
+            <input type="file" id="passport_copy" name="passport_copy" accept="application/pdf, image/jpeg, image/png" required>
+
             <label for="gender">Gender:<span>*</span></label>
             <select id="gender" name="gender" required>
                 <option value="">--Select--</option>
