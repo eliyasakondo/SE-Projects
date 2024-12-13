@@ -1,7 +1,6 @@
 CREATE TABLE tutors (
     tutor_id INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
+    user_id INT NOT NULL,
     name_en VARCHAR(255) NOT NULL,
     name_bn VARCHAR(255) NOT NULL,
     father_name_en VARCHAR(255) NOT NULL,
@@ -30,7 +29,8 @@ CREATE TABLE tutors (
     present_district VARCHAR(255) NOT NULL,
     photo VARCHAR(255),
     signature VARCHAR(255),
-    cv VARCHAR(255)
+    cv VARCHAR(255),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE tutor_education (
