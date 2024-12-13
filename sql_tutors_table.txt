@@ -30,6 +30,7 @@ CREATE TABLE tutors (
     photo VARCHAR(255),
     signature VARCHAR(255),
     cv VARCHAR(255),
+    status ENUM('pending', 'forwarded', 'approved', 'rejected') DEFAULT 'pending',
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
@@ -130,3 +131,39 @@ CREATE TABLE tutor_reference (
     reference_email VARCHAR(255) NOT NULL,
     FOREIGN KEY (tutor_id) REFERENCES tutors(tutor_id) ON DELETE CASCADE
 );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--Join use in coordinator/Dashboard.php
+$sql = "SELECT tutors.tutor_id, tutors.name_en, users.email, tutors.status 
+        FROM tutors 
+        JOIN users ON tutors.user_id = users.user_id";
