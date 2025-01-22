@@ -3,7 +3,7 @@ session_start();
 include '../../includes/functions.php';
 include '../../includes/db.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'dean') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'vc') {
     header('Location: ../login.php');
     exit();
 }
@@ -12,7 +12,7 @@ $conn = get_db_connection();
 $sql = "SELECT tutors.tutor_id, tutors.name_en, users.email, tutors.status 
         FROM tutors 
         JOIN users ON tutors.user_id = users.user_id 
-        WHERE tutors.status = 'forwarded'";
+        WHERE tutors.status IN ('forwarded_to_vc', 'selected')";
 $stmt = $conn->prepare($sql);
 $stmt->execute();
 $tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -23,7 +23,7 @@ $tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dean Dashboard</title>
+    <title>VC Dashboard</title>
     <style>
         table {
             width: 100%;
@@ -55,7 +55,7 @@ $tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
     <header>
-        <h1>Dean Dashboard</h1>
+        <h1>VC Dashboard</h1>
         <nav>
             <ul>
                 <li><a href="dashboard.php">Dashboard</a></li>
@@ -84,18 +84,20 @@ $tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <td>
                     <div class="actions">
                         <a href="view_tutor.php?tutor_id=<?php echo $tutor['tutor_id']; ?>">View</a>
+                        <?php if ($tutor['status'] == 'forwarded_to_vc'): ?>
                         <form action="process_tutor.php" method="post">
                             <input type="hidden" name="tutor_id" value="<?php echo $tutor['tutor_id']; ?>">
-                            <input type="hidden" name="action" value="forward_sss">
+                            <input type="hidden" name="action" value="approve">
                             <input type="text" name="comments" placeholder="Enter comments">
-                            <button type="submit">Forward to SSS</button>
+                            <button type="submit">Approve</button>
                         </form>
                         <form action="process_tutor.php" method="post">
                             <input type="hidden" name="tutor_id" value="<?php echo $tutor['tutor_id']; ?>">
                             <input type="hidden" name="action" value="send_back">
                             <input type="text" name="comments" placeholder="Enter comments">
-                            <button type="submit">Send Back to Coordinator</button>
+                            <button type="submit">Send Back to Pro VC</button>
                         </form>
+                        <?php endif; ?>
                         <form action="process_tutor.php" method="post">
                             <input type="hidden" name="tutor_id" value="<?php echo $tutor['tutor_id']; ?>">
                             <input type="hidden" name="action" value="reject">

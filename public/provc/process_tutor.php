@@ -3,7 +3,7 @@ session_start();
 include '../../includes/functions.php';
 include '../../includes/db.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'dean') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'provc') {
     header('Location: ../login.php');
     exit();
 }
@@ -15,11 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $conn = get_db_connection();
 
-    if ($action == 'approve') {
-        $status = 'approved';
+    if ($action == 'forward_vc') {
+        $status = 'forwarded_to_vc';
     } elseif ($action == 'send_back') {
-        $status = 'pending';
-    } elseif ($action == 'forward_sss') {
         $status = 'forwarded_to_sss';
     } elseif ($action == 'reject') {
         $status = 'rejected';

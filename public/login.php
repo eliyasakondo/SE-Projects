@@ -80,6 +80,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     echo "Redirecting to provc dashboard<br>";
                     header('Location: provc/dashboard.php');
                     break;
+                case 'vc':
+                    error_log("Redirecting to provc dashboard");
+                    echo "Redirecting to provc dashboard<br>";
+                    header('Location: vc/dashboard.php');
+                    break;
                 default:
                     error_log("Unknown role, redirecting to login");
                     echo "Unknown role, redirecting to login<br>";
